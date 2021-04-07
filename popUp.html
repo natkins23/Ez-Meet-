@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+  <button id = "back" hidden >Back</button>
+  <button id = "create" >Create Event</button>
+  <button id = "view">View Events</button>
+  
+  <div hidden id = "input-fields">
+
+    <p>New Event</p>
+    <p>Name:</p>
+    <input id = "fname" type = "text" required placeholder="First">
+    <input id = "lname" type = "text" required placeholder="Last">  
+    <p>Meeting Info:</p>
+    <input id = "event" type = "text" required>
+    <input id = "start-date" type = "date" required>
+    <input id = "start-time" type = "time" required>
+    <input id = "end-time" type = "time" required>
+    <p>Zoom Info:</p>
+    <input id = "link" type = "text" required placeholder="https://zoom...">
+    <input id = "pass" type = "text" required placeholder="Password">
+    <input id = "submit" type = "submit">
+
+  </div>
+
+  <div hidden id="events-container">
+    <p>Events</p>
+    <p>Name:</p>
+
+  </div>
+
+
+
+<script src = popup.js></script>
+
+</body>
+</html>
