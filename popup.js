@@ -4,16 +4,9 @@
 
 
 let arrayOfEvents = [];
-let eventCount=0;
+let eventsCreatedCount = 0;
 let printedEvents = 0;
 
-function updateCount(){
-  for(let i =0; i<arrayOfEvents.length; i++){
-    eventCount = arrayOfEvents.length;
-    return eventCount;
-  }
-
-}
 
 //----------------------
 //      Elements
@@ -29,6 +22,7 @@ let eventDateInput = document.getElementById("start-date");
 let eventEndTimeInput = document.getElementById("start-time");
 let eventStartTimeInput = document.getElementById("end-time");
 
+
 //buttons
 let backBtn = document.getElementById("back");
 let createBtn = document.getElementById("create");
@@ -36,8 +30,8 @@ let viewBtn = document.getElementById("view");
 let submitBtn = document.getElementById("submit");
 
 //containers
-let input = document.getElementById("input-fields");
-let events = document.getElementById("events-container");
+let inputContainer = document.getElementById("input-fields");
+let eventsContainer = document.getElementById("all-events");
 
 //----------------------
 //      Functions
@@ -55,21 +49,21 @@ function showMain(){
 
 //input
 function showInput(){
-  input.hidden = false;
+  inputContainer.hidden = false;
   backBtn.hidden = false; 
 }
 function hideInput(){
   backBtn.hidden = true;
-  input.hidden = true;
+  inputContainer.hidden = true;
 }
 
 //events
 function showEvents(){
-  events.hidden = false;
+  eventsContainer.hidden = false;
   backBtn.hidden = false; 
 }
 function hideEvents(){
-  events.hidden = true;
+  eventsContainer.hidden = true;
   backBtn.hidden = true;
 }
 
@@ -168,39 +162,40 @@ createBtn.addEventListener('click', function () {
 backBtn.addEventListener('click',function(){
   console.log("penis");
   //if input is showing
-  if(input.hidden == false){
+  if(inputContainer.hidden == false){
     showMain();
     hideInput();
   }
 
   //if events are showing
-  else if(events.hidden == false){
+  else if(eventsContainer.hidden == false){
     showMain();
     hideEvents();
+    
   }
 });
 
 // click "view" button
 viewBtn.addEventListener('click',function(){
-  console.log(eventCount);
-  updateCount();
-  console.log(eventCount);
-  if(eventCount<1){
+  if(eventsCreatedCount<1){
     alert("No events to view, create an event first");
   }
   else {
     hideMain();
     showEvents();
   }
-  
+
  });
 
 
+
 // click "submit" button
+//creates the event
 document.getElementById("submit").addEventListener('click', function() {
   //input validation
   if(NameFilled() && MeetingFilled() && ZoomFilled()){
     //make an instance
+    eventsCreatedCount++;
     let tempEvent = {}
 
     //fill up the object
@@ -210,120 +205,94 @@ document.getElementById("submit").addEventListener('click', function() {
     tempEvent.date = document.getElementById("start-date").value;
     tempEvent.startTime = document.getElementById("start-time").value;
     tempEvent.endTime = document.getElementById("end-time").value;
+    tempEvent.countId = eventsCreatedCount;
       
-    arrayOfEvents.push(tempEvent);
+    arrayOfEvents.push(tempEvent); 
+    createEvent();
     showMain();
     hideInput();
     
   }//validation
 });
 
+function findDeltedObject(id){
+  for(let i = 0; i<arrayOfEvents.length; i++){
+    if(arrayOfEvents[i].countId = id){
+      return i;
+    }
+  }
+}
 
-// function printEventDetails(){
+function createEvent(){
+  console.log(eventsCreatedCount);  
+  let curEvent = arrayOfEvents[eventsCreatedCount-1];
+  
+  //event container
+  let newEvent = document.createElement("div");
+  let eventId = "event-" + eventsCreatedCount;
+  
+  //make the event id a number
+  newEvent.id = eventId;
+  eventsContainer.appendChild(newEvent);
 
-//     let node =document.createTextNode("Event " + eventCount)
-//     newForm.id = "eventForm"
-//     events.appendChild(newForm)
-//     newForm.appendChild(node);
+
+
+  //remove event title
+  //edit an event
+  //opens the input page
+  //the event is prepopulated with the event chosen to edits values
+
+//create varible for events created and never decrement it, and use that to populate event ids
+//this means i would have to delete an event based on the contents of the event
+
+//this one!!!!!
+
+//maybe just have an event created variable as part of the object, loop through the object and find an event with that event counter
+
+
+  //Event Details
+  let eventNamePara = document.createElement("p");
+  eventNamePara.textContent = "Event : " + curEvent.eventName;
+  newEvent.appendChild(eventNamePara);
+
+  //deleteButton
+  let eventDeleteBtn = document.createElement("button");
+  eventDeleteBtn.textContent = "x";
+  eventNamePara.appendChild(eventDeleteBtn);
+  eventDeleteBtn.addEventListener('click', function(e) {
     
-//     para = document.createElement("p");
-//     node = document.createTextNode("-----------------");
-//     para.appendChild(node);
-//     newForm.appendChild(para);
-
-
-//     para = document.createElement("p");
-//     node = document.createTextNode("Event Name " +curMeeting.eventName);
-//     para.appendChild(node);
-//     newForm.appendChild(para);
-
-//     para = document.createElement("p");
-//     node = document.createTextNode("Zoom link: " + curMeeting.zoomLink);
-//     para.appendChild(node);
-//     newForm.appendChild(para);
-//     para = document.createElement("p");
-//     node = document.createTextNode("Zoom pass: " + curMeeting.zoomPass);
-//     para.appendChild(node);
-//     newForm.appendChild(para);
+    //find index of event object we're deleting
+    let indexOfEvent = findDeltedObject(eventsCreatedCount);
     
-//     //when
-//     para = document.createElement("p");
-//     node = document.createTextNode("Date: " + curMeeting.date);
-//     para.appendChild(node);
-//     newForm.appendChild(para);
-//     para = document.createElement("p");
-//     node = document.createTextNode("Start Time: " + curMeeting.startTime);
-//     para.appendChild(node);
-//     newForm.appendChild(para);
-//     para = document.createElement("p");
-//     node = document.createTextNode("End Time: " + curMeeting.endTime);
-//     para.appendChild(node);
-//     newForm.appendChild(para);
-
-
-//     para = document.createElement("p");
-//     node = document.createTextNode("-----------------");
-//     para.appendChild(node);
-//     newForm.appendChild(para);
-//   }
-
-
-
-
-
-
-// let newEvent = document.getElementById("create-new-event");
-
-// newEvent.addEventListener('click', function () {
+    //remove deleted event from array of events
+    arrayOfEvents.splice(indexOfEvent,1);
+    //remove the div
+    eventsContainer.removeChild(newEvent);
+  });
   
   
+  let eventLinkPara = document.createElement("p");
+  eventLinkPara.textContent = "Zoom link: " + curEvent.zoomLink;
+  newEvent.appendChild(eventLinkPara);
   
-  // document.createElement('BUTTON');
-  // text.setAttribute("type", "text");
-  // text.setAttribute("id", "nodeID");
-  // text.setAttribute("placeholder", "First");
+
+  let eventPassPara = document.createElement("p");
+  eventPassPara.textContent = "Zoom pass: " + curEvent.zoomPass;
+  newEvent.appendChild(eventPassPara);
 
 
-    // var text1 = document.createElement('input');
-    // text1.setAttribute("type", "text");
-    // text1.setAttribute("id", "nodeID");
-    // text1.setAttribute("placeholder", "Last");
-    // var text2 = document.createElement('input');
-    // text2.setAttribute("type", "text");
-    // text2.setAttribute("id", "nodeID");
-    // text2.setAttribute("placeholder", "Class");
-    // var text3 = document.createElement('input');
-    // text3.setAttribute("type", "text");
-    // text3.setAttribute("id", "nodeID");
-    // text3.setAttribute("placeholder", "Link");
-  
-  // var form = document.getElementById("form");
-  // form.appendChild(text);
+  let eventDatePara = document.createElement("p");
+  eventDatePara.textContent = "Date: " + curEvent.date;
+  newEvent.appendChild(eventDatePara);
 
+  let eventStartTimePara = document.createElement("p");
+  eventStartTimePara.textContent = "Start Time: " + curEvent.startTime;
+  newEvent.appendChild(eventStartTimePara);
 
-
-
-    // form.appendChild(text1);
-    // form.appendChild(text2);
-    // form.appendChild(text3);
-
-
-
-  // var submit = document.createElement('BUTTON');
-  // form.appendChild(submit);
-//});
-
-
-// if i want to make a new webpage - potential future
-// newEvent.addEventListener("click",e => {
-//   showReadme();     
-// });
-
-
-// function showReadme(info, tab) {
-//   let url = chrome.runtime.getURL("newevent.html");
-//   chrome.tabs.create({ url });
-// }
+  let eventEndTimePara = document.createElement("p");
+  eventEndTimePara.textContent ="End Time: " + curEvent.endTime;
+  newEvent.appendChild(eventEndTimePara);
+}
 
 
 
