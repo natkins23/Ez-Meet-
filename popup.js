@@ -6,6 +6,7 @@
 let arrayOfEvents = [];
 let eventsCreatedCount = 0;
 let printedEvents = 0;
+let indexOfEditingEvent = null;
 
 
 //----------------------
@@ -22,12 +23,15 @@ let eventDateInput = document.getElementById("start-date");
 let eventEndTimeInput = document.getElementById("start-time");
 let eventStartTimeInput = document.getElementById("end-time");
 
+let countDiv = document.getElementById("eventCount");
 
 //buttons
-let backBtn = document.getElementById("back");
+let mainBtn = document.getElementById("main");
 let createBtn = document.getElementById("create");
 let viewBtn = document.getElementById("view");
 let submitBtn = document.getElementById("submit");
+let commitEditBtn = document.getElementById("edit");
+
 
 //containers
 let inputContainer = document.getElementById("input-fields");
@@ -37,6 +41,20 @@ let eventsContainer = document.getElementById("all-events");
 //      Functions
 //----------------------
 
+
+
+
+//---------------------
+//       helpers
+//----------------------
+function findObjectByCreatedCount(id){
+  for(let i = 0; i<arrayOfEvents.length; i++){
+    if(arrayOfEvents[i].countId = id){
+      return i;
+    }
+  }
+}
+
 //main
 function hideMain(){
   createBtn.hidden = true;
@@ -45,26 +63,32 @@ function hideMain(){
 function showMain(){
   createBtn.hidden = false;
   viewBtn.hidden = false;
+  updateViewOfCount();
+  commitEditBtn.hidden = true;
 }
 
 //input
 function showInput(){
   inputContainer.hidden = false;
-  backBtn.hidden = false; 
+  mainBtn.hidden = false; 
+  commitEditBtn.hidden =true;
 }
 function hideInput(){
-  backBtn.hidden = true;
+  mainBtn.hidden = true;
   inputContainer.hidden = true;
 }
 
 //events
 function showEvents(){
   eventsContainer.hidden = false;
-  backBtn.hidden = false; 
+  mainBtn.hidden = false; 
+  commitEditBtn.hidden = true;
+  countDiv.hidden = false;
 }
 function hideEvents(){
   eventsContainer.hidden = true;
-  backBtn.hidden = true;
+  mainBtn.hidden = true;
+  updateViewOfCount();
 }
 
 
@@ -135,15 +159,18 @@ function ZoomlinkLogic(){
   return true;
 }
 
+
 //----------------------
-// Buttons Click Events
+// eventListeners
 //----------------------
 
 
 // click "create event" - (collecting input)
+//----------------------------------------
 createBtn.addEventListener('click', function () {
   hideMain();
   showInput();
+  submitBtn.hidden =false;
 
   //PRESET VALUES
   let tempTime =  getCurrentTime();
@@ -158,26 +185,28 @@ createBtn.addEventListener('click', function () {
   zoomPassInput.value = "5N#DA@";
 })
 
-// click "back" button
-backBtn.addEventListener('click',function(){
-  console.log("penis");
+// click "main" button
+//----------------------------------------
+mainBtn.addEventListener('click',function(){
   //if input is showing
   if(inputContainer.hidden == false){
     showMain();
     hideInput();
+    indexOfEditingEvent = null;
   }
 
   //if events are showing
   else if(eventsContainer.hidden == false){
     showMain();
-    hideEvents();
-    
+    hideEvents();    
   }
+  
 });
 
 // click "view" button
+//----------------------------------------
 viewBtn.addEventListener('click',function(){
-  if(eventsCreatedCount<1){
+  if(arrayOfEvents.length==0){
     alert("No events to view, create an event first");
   }
   else {
@@ -185,18 +214,25 @@ viewBtn.addEventListener('click',function(){
     showEvents();
   }
 
+  
  });
 
+
+function updateViewOfCount(){
+  let size = arrayOfEvents.length;
+  countDiv.textContent = "Event Count: " + size;
+}
 
 
 // click "submit" button
 //creates the event
+//----------------------------------------
 document.getElementById("submit").addEventListener('click', function() {
   //input validation
   if(NameFilled() && MeetingFilled() && ZoomFilled()){
     //make an instance
     eventsCreatedCount++;
-    let tempEvent = {}
+    let tempEvent = {};
 
     //fill up the object
     tempEvent.eventName = document.getElementById("event").value;
@@ -208,24 +244,23 @@ document.getElementById("submit").addEventListener('click', function() {
     tempEvent.countId = eventsCreatedCount;
       
     arrayOfEvents.push(tempEvent); 
-    createEvent();
+    createEvent(eventsCreatedCount);
     showMain();
     hideInput();
     
   }//validation
-});
+}); // emd pf sin,ot
 
-function findDeltedObject(id){
-  for(let i = 0; i<arrayOfEvents.length; i++){
-    if(arrayOfEvents[i].countId = id){
-      return i;
+
+
+function createEvent(lecount){
+let theIndex;
+  for(let i =0; i<arrayOfEvents.length;i++){
+    if(arrayOfEvents[i].countId==lecount){
+      theIndex =i;
     }
   }
-}
-
-function createEvent(){
-  console.log(eventsCreatedCount);  
-  let curEvent = arrayOfEvents[eventsCreatedCount-1];
+  let curEvent = arrayOfEvents[theIndex];
   
   //event container
   let newEvent = document.createElement("div");
@@ -236,40 +271,141 @@ function createEvent(){
   eventsContainer.appendChild(newEvent);
 
 
-
-  //remove event title
-  //edit an event
-  //opens the input page
-  //the event is prepopulated with the event chosen to edits values
-
-//create varible for events created and never decrement it, and use that to populate event ids
-//this means i would have to delete an event based on the contents of the event
-
-//this one!!!!!
-
-//maybe just have an event created variable as part of the object, loop through the object and find an event with that event counter
-
-
   //Event Details
   let eventNamePara = document.createElement("p");
   eventNamePara.textContent = "Event : " + curEvent.eventName;
   newEvent.appendChild(eventNamePara);
 
-  //deleteButton
+  //delete Button
   let eventDeleteBtn = document.createElement("button");
   eventDeleteBtn.textContent = "x";
   eventNamePara.appendChild(eventDeleteBtn);
   eventDeleteBtn.addEventListener('click', function(e) {
-    
     //find index of event object we're deleting
-    let indexOfEvent = findDeltedObject(eventsCreatedCount);
-    
+    let indexOfEvent = findObjectByCreatedCount(eventsCreatedCount);
     //remove deleted event from array of events
     arrayOfEvents.splice(indexOfEvent,1);
     //remove the div
     eventsContainer.removeChild(newEvent);
+    updateViewOfCount();
   });
   
+
+   //edit Button
+   let eventEditBtn = document.createElement("button");
+   eventEditBtn.textContent = "Edit";
+   eventNamePara.appendChild(eventEditBtn);
+   eventEditBtn.addEventListener('click', function() {
+     hideEvents();
+     showInput();
+     submitBtn.hidden = true;
+     commitEditBtn.hidden = false;
+     let indexOfEvent = findObjectByCreatedCount(eventsCreatedCount);
+     populateInputFeilds(indexOfEvent);
+     indexOfEditingEvent = indexOfEvent;
+   });
+
+   // final edit button press
+  commitEditBtn.addEventListener("click",function(){
+    console.log(indexOfEditingEvent);
+
+    //updating object
+    let updatingEvent = arrayOfEvents[indexOfEditingEvent];
+    updatingEvent.eventName = document.getElementById("event").value;
+    updatingEvent.zoomLink = document.getElementById("link").value;
+    updatingEvent.zoomPass = document.getElementById("pass").value;
+    updatingEvent.date = document.getElementById("start-date").value;
+    updatingEvent.startTime = document.getElementById("start-time").value;
+    updatingEvent.endTime = document.getElementById("end-time").value; 
+
+    //updating text on event view page
+    //create the id of the div
+    //remove all of the p's
+    let tempDivEventId = "event-"+updatingEvent.countId;
+    let parent = document.getElementById(tempDivEventId);
+    let child  =parent.lastElementChild;
+    while (child) {
+        parent.removeChild(child);
+        child = parent.lastElementChild;
+    };
+    
+      //Event Details
+  let eventNamePara = document.createElement("p");
+  eventNamePara.textContent = "Event : " + curEvent.eventName;
+  newEvent.appendChild(eventNamePara);
+
+  //delete Button
+  let eventDeleteBtn = document.createElement("button");
+  eventDeleteBtn.textContent = "x";
+  eventNamePara.appendChild(eventDeleteBtn);
+  eventDeleteBtn.addEventListener('click', function(e) {
+    //find index of event object we're deleting
+    let indexOfEvent = findObjectByCreatedCount(eventsCreatedCount);
+    //remove deleted event from array of events
+    arrayOfEvents.splice(indexOfEvent,1);
+    //remove the div
+    eventsContainer.removeChild(newEvent);
+    updateViewOfCount();
+  });
+  
+
+   //edit Button
+   let eventEditBtn = document.createElement("button");
+   eventEditBtn.textContent = "Edit";
+   eventNamePara.appendChild(eventEditBtn);
+   eventEditBtn.addEventListener('click', function() {
+     hideEvents();
+     showInput();
+     submitBtn.hidden = true;
+     commitEditBtn.hidden = false;
+     let indexOfEvent = findObjectByCreatedCount(eventsCreatedCount);
+     populateInputFeilds(indexOfEvent);
+     indexOfEditingEvent = indexOfEvent;
+   });
+
+
+    let eventLinkPara = document.createElement("p");
+    eventLinkPara.textContent = "Zoom link: " + curEvent.zoomLink;
+    newEvent.appendChild(eventLinkPara);
+    
+  
+    let eventPassPara = document.createElement("p");
+    eventPassPara.textContent = "Zoom pass: " + curEvent.zoomPass;
+    newEvent.appendChild(eventPassPara);
+  
+  
+    let eventDatePara = document.createElement("p");
+    eventDatePara.textContent = "Date: " + curEvent.date;
+    newEvent.appendChild(eventDatePara);
+  
+    let eventStartTimePara = document.createElement("p");
+    eventStartTimePara.textContent = "Start Time: " + curEvent.startTime;
+    newEvent.appendChild(eventStartTimePara);
+  
+    let eventEndTimePara = document.createElement("p");
+    eventEndTimePara.textContent ="End Time: " + curEvent.endTime;
+    newEvent.appendChild(eventEndTimePara);
+
+
+    
+
+    hideInput();
+    showEvents();
+    
+
+  }) //end of create
+  
+  function populateInputFeilds(index){
+    let curEvent = arrayOfEvents[index];
+    
+    zoomLinkInput.setAttribute("placeholder",curEvent.zoomLink)
+    zoomPassInput.setAttribute("placeholder",curEvent.zoomPass)
+    eventNameInput.setAttribute("placeholder",curEvent.eventName)
+    eventDateInput.setAttribute("placeholder",curEvent.date)
+    eventEndTimeInput.setAttribute("placeholder",curEvent.startTime)
+    eventStartTimeInput.setAttribute("placeholder",curEvent.endTime)
+  }
+
   
   let eventLinkPara = document.createElement("p");
   eventLinkPara.textContent = "Zoom link: " + curEvent.zoomLink;
@@ -293,6 +429,7 @@ function createEvent(){
   eventEndTimePara.textContent ="End Time: " + curEvent.endTime;
   newEvent.appendChild(eventEndTimePara);
 }
+
 
 
 

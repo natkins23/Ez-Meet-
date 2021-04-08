@@ -2,10 +2,12 @@
 <html>
 <body>
 
-  <button id = "back" hidden >Back</button>
+  <button id = "main" hidden >Main Menu</button>
   <button id = "create" >Create Event</button>
   <button id = "view">View Events</button>
   
+  <div id = "eventCount" hidden>Event Count:</div>
+
   <div hidden id = "input-fields">
 
     <p>New Event</p>
@@ -21,8 +23,11 @@
     <input id = "link" type = "text" required placeholder="https://zoom...">
     <input id = "pass" type = "text" required placeholder="Password">
     <input id = "submit" type = "submit">
+    
 
   </div>
+
+  <button id = "edit" hidden >Edit Event</button>
 
   <div hidden id = "all-events"></div>
 
