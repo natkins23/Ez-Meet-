@@ -1,7 +1,7 @@
 {
   "name": "ezMeeting ZoomConnect",
   "description": "Connect automatically to your zoom meetings",
-  "version": "2.0",
+  "version": "1.0",
   "manifest_version": 3,
   "background": {
     "service_worker": "background.js"

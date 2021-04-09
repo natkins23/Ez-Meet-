@@ -183,6 +183,8 @@ createBtn.addEventListener('click', function () {
   eventEndTimeInput.value  = tempTime;
   zoomLinkInput.value = "https://cccconfer.zoom.us/j/98359639686";
   zoomPassInput.value = "5N#DA@";
+
+  
 })
 
 // click "main" button
@@ -203,16 +205,19 @@ mainBtn.addEventListener('click',function(){
   
 });
 
+
 // click "view" button
 //----------------------------------------
 viewBtn.addEventListener('click',function(){
-  if(arrayOfEvents.length==0){
-    alert("No events to view, create an event first");
-  }
-  else {
-    hideMain();
-    showEvents();
-  }
+
+  chrome.storage.sync.get(['key'], function(result) {
+    console.log('Value currently is ' + result.key);
+
+  });
+
+  hideMain();
+  showEvents();
+
 
   
  });
@@ -221,6 +226,18 @@ viewBtn.addEventListener('click',function(){
 function updateViewOfCount(){
   let size = arrayOfEvents.length;
   countDiv.textContent = "Event Count: " + size;
+}
+
+function saveChanges() {
+  // Get a value saved in a form.
+  var theValue = "penis";
+  // Check that there's some code there.
+  if (!theValue) {
+    console.log('Error: No value specified');
+    return;
+  }
+  // Save it using the Chrome extension storage API.
+
 }
 
 
@@ -242,14 +259,26 @@ document.getElementById("submit").addEventListener('click', function() {
     tempEvent.startTime = document.getElementById("start-time").value;
     tempEvent.endTime = document.getElementById("end-time").value;
     tempEvent.countId = eventsCreatedCount;
-      
+    saveChanges();
     arrayOfEvents.push(tempEvent); 
     createEvent(eventsCreatedCount);
     showMain();
     hideInput();
+
+    let temp = arrayOfEvents[0].eventName;
+    chrome.storage.sync.set({key: temp}, function() {
+      console.log('The name of the Event is set to ' + temp);
+    });
+
+    let size = arrayOfEvents.length;
+    chrome.storage.sync.set({key: size}, function() {
+      console.log('The current number of events are set to ' + size);
+    });
+    
+    
     
   }//validation
-}); // emd pf sin,ot
+}); // end of sumbit
 
 
 
