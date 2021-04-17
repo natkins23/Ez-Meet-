@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <body>
-
+  <form>
   <!---------------------All Pages----------------------->
   <button id = "back-to-main" hidden >Main Menu</button>
   <button id ="clear-memory">Clear</button>
@@ -15,6 +15,7 @@
   <div hidden id="main-menu-page">
     <button id = "create" >Create Event</button>
     <button id = "view">View Events</button>
+    <button id = "edit-profile">Edit Profile</button>
   </div>
   
   <div id = "input-profile-page">
@@ -22,6 +23,7 @@
       Create a profile!
     </p>
     <p>Enter Name:</p>
+  
     <input id = "fname" type = "text" required placeholder="First">
     <input id = "lname" type = "text" required placeholder="Last"> 
     <input id = "prefer-nick" type = "checkbox" required>
@@ -65,6 +67,8 @@
 
   
   <div hidden id = "all-events"></div>
+
+</form>
 
 <script src = "popup.js"></script>
 

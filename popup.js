@@ -13,6 +13,8 @@
  const MAIN_PAGE= document.getElementById("main-menu-page");
  const CREATE_EVENT_BTN = document.getElementById("create");
  const VIEW_EVENT_BTN = document.getElementById("view");
+ const EDIT_PROFILE_BTN = document.getElementById("edit-profile");
+
 
 //------------------------CREATE PROFILE----------------------------------
  const INPUT_PROFILE_PAGE = document.getElementById("input-profile-page");
@@ -110,29 +112,39 @@ function displayWelcome(){
 NICKNAME_CHECKBOX.addEventListener("click", function(){
   if(NICKNAME_CHECKBOX.checked){
     NICKNAME_INPUT_CONTAINER.hidden = false; 
+    NICKNAME_INPUT.required = true;
   }
   else{
     NICKNAME_INPUT_CONTAINER.hidden = true;
+    NICKNAME_INPUT.required = false;
   }
 })
 
 // ----------------- Create Profile---------------------
 CREATE_PROFILE_BTN.addEventListener("click", function(){ 
-  profile.first = FIRST_NAME_INPUT.value;
-  profile.last = LAST_NAME_INPUT.value;
-  if (NICKNAME_CHECKBOX.checked){
-    profile.nick = NICKNAME_INPUT.value;
+  if(NameFilled()){
+    profile.first = FIRST_NAME_INPUT.value;
+    profile.last = LAST_NAME_INPUT.value;
+    if (NICKNAME_CHECKBOX.checked){
+      profile.nick = NICKNAME_INPUT.value;
+    }
+    else{
+      profile.nick = null;
+    }
+    openMain();
+    displayWelcome();
+    storeProfile();
+    INPUT_PROFILE_PAGE.hidden = true;
+    
   }
-  else{
-    profile.nick = null;
-  }
-  openMain();
-  displayWelcome();
-  storeProfile();
-  INPUT_PROFILE_PAGE.hidden = true;
 })
 
-
+EDIT_PROFILE_BTN.addEventListener("click",function(){
+  //open the profile edit menu
+  hideMain();
+  INPUT_PROFILE_PAGE.hidden = false;
+  GO_TO_MAIN_BTN.hidden = false;
+})
 
 //-----------------Create event-------------------------
 CREATE_EVENT_BTN.addEventListener('click', function () {
@@ -155,6 +167,7 @@ CREATE_EVENT_BTN.addEventListener('click', function () {
 //----------------------------------------
 GO_TO_MAIN_BTN.addEventListener('click',function(){
   openMain();
+  GO_TO_MAIN_BTN.hidden = true;
   });
   
 
@@ -400,15 +413,23 @@ function updateViewOfCount(){
 
 
 function NameFilled(){
-  // let infoValid;
-  // if(firstNameInput.value !="" && lastNameInput.value !=""){
-  //   infoValid = true;
-  // }
-  //   else{
-  //     infoValid = false;
-  //   }
-  //   return infoValid
-  return true;
+  let infoValid;
+  if(FIRST_NAME_INPUT.value !="" && LAST_NAME_INPUT.value !=""){
+    infoValid = true;
+    if(NICKNAME_CHECKBOX){
+      //make sure nickname is entered
+      if(NICKNAME_INPUT.value !=""){
+        infoValid = true;
+      }
+      else{
+        infoValid = false;
+      }
+    }
+  }
+  else{
+      infoValid = false;
+  }
+    return infoValid
 }
 
 function MeetingFilled(){
