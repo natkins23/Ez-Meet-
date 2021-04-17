@@ -18,12 +18,14 @@
 
 //------------------------CREATE PROFILE----------------------------------
  const INPUT_PROFILE_PAGE = document.getElementById("input-profile-page");
+ const PROFILE_INPUT_MSG = document.getElementById("profile-input-message");
  const FIRST_NAME_INPUT = document.getElementById("fname");
  const LAST_NAME_INPUT = document.getElementById("lname");
  const NICKNAME_CHECKBOX = document.getElementById("prefer-nick");
  const NICKNAME_INPUT_CONTAINER = document.getElementById("input-nick");
  const NICKNAME_INPUT = document.getElementById("nick");
  const CREATE_PROFILE_BTN = document.getElementById("create-profile");
+ 
 
 //-----------------------------INPUT------------------------------------
  const INPUT_EVENTS_PAGE = document.getElementById("input-event-page");
@@ -35,8 +37,8 @@
  const EVENT_END_TIME_INPUT = document.getElementById("end-time");
  const ZOOM_LINK_INPUT = document.getElementById("link");
  const ZOOM_PASS_INPUT = document.getElementById("pass");
- const SUBMIT_BTN = document.getElementById("submit-new");
- const SUBMIT_EDIT_BTN = document.getElementById("submit-edit");
+ const SUBMIT_BTN = document.getElementById("submit");
+
 
 //---------------------------VIEW EVENTS------------------------------
  const VIEW_EVENTS_PAGE = document.getElementById("view-events-page");
@@ -53,7 +55,7 @@ document.body.onload = function() {
 
   updateLocalProfile(profileValdiation,storeProfile,displayWelcome);
   updateLocalEvents();
-  COUNT_VIEW.hidden =false;
+  COUNT_VIEW.hidden =true;
   //check profile object
 };
 
@@ -94,7 +96,6 @@ function storeProfile(){
 }
 
 function displayWelcome(){
-  console.log("working")
   if(profile.nick){
     WELCOME.textContent = "Welcome " + profile.nick + "!";
     WELCOME.hidden = false;
@@ -122,7 +123,9 @@ NICKNAME_CHECKBOX.addEventListener("click", function(){
 
 // ----------------- Create Profile---------------------
 CREATE_PROFILE_BTN.addEventListener("click", function(){ 
+  
   if(NameFilled()){
+    console.log("working");
     profile.first = FIRST_NAME_INPUT.value;
     profile.last = LAST_NAME_INPUT.value;
     if (NICKNAME_CHECKBOX.checked){
@@ -131,20 +134,27 @@ CREATE_PROFILE_BTN.addEventListener("click", function(){
     else{
       profile.nick = null;
     }
+    console.log(profile.name);
     openMain();
-    displayWelcome();
     storeProfile();
+    displayWelcome();
     INPUT_PROFILE_PAGE.hidden = true;
+    GO_TO_MAIN_BTN.hidden = true;
     
   }
 })
 
+function createProfile(){
+  
+}
+
 EDIT_PROFILE_BTN.addEventListener("click",function(){
+  CREATE_PROFILE_BTN.textContent = "Edit Profile";
+  PROFILE_INPUT_MSG.textContent = "Editing your profile";
   //open the profile edit menu
-  hideMain();
-  INPUT_PROFILE_PAGE.hidden = false;
-  GO_TO_MAIN_BTN.hidden = false;
+  openProfileEdit();
 })
+
 
 //-----------------Create event-------------------------
 CREATE_EVENT_BTN.addEventListener('click', function () {
@@ -327,7 +337,17 @@ function populateInputFeilds(index){
 
 //--------------------hiding--------------------------------------
 
+function openProfileEdit(){
+  hideMain();
+  INPUT_PROFILE_PAGE.hidden = false;
+  GO_TO_MAIN_BTN.hidden = false;
+  EDIT_PROFILE_BTN.hidden = true;
+  WELCOME.hidden = true;
+  COUNT_VIEW.hidden = true;
+}
+
 function openMain(){
+
   showMain();
   //if input is being shown - hide it
   if(!INPUT_EVENTS_PAGE.hidden){
@@ -367,9 +387,12 @@ function openEvents(){
 //main
 function hideMain(){
   MAIN_PAGE.hidden = true;
+  EDIT_PROFILE_BTN.hidden = true;
 }
 function showMain(){
+  COUNT_VIEW.hidden =false;
   MAIN_PAGE.hidden = false;
+  EDIT_PROFILE_BTN.hidden = false;
   //updateViewOfCount();  
 }
 
@@ -413,15 +436,17 @@ function updateViewOfCount(){
 
 
 function NameFilled(){
+  console.log("nameFilled is Called");
   let infoValid;
   if(FIRST_NAME_INPUT.value !="" && LAST_NAME_INPUT.value !=""){
     infoValid = true;
-    if(NICKNAME_CHECKBOX){
+    if(NICKNAME_CHECKBOX.checked){
       //make sure nickname is entered
       if(NICKNAME_INPUT.value !=""){
         infoValid = true;
       }
       else{
+        
         infoValid = false;
       }
     }
@@ -429,7 +454,9 @@ function NameFilled(){
   else{
       infoValid = false;
   }
+  
     return infoValid
+    
 }
 
 function MeetingFilled(){
