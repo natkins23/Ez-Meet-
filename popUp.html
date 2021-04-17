@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+  <!---------------------All Pages----------------------->
+  <button id = "back-to-main" hidden >Main Menu</button>
+  <button id ="clear-memory">Clear</button>
+
+  <p id = "welcome" >Welcome</p>
+  <p id = "event-count-view" >Event Count:</p>
+
+
+
+  <!----------------------Pages------------------------->
+  <div hidden id="main-menu-page">
+    <button id = "create" >Create Event</button>
+    <button id = "view">View Events</button>
+  </div>
+  
+  <div id = "input-profile-page">
+    <p>
+      Create a profile!
+    </p>
+    <p>Enter Name:</p>
+    <input id = "fname" type = "text" required placeholder="First">
+    <input id = "lname" type = "text" required placeholder="Last"> 
+    <input id = "prefer-nick" type = "checkbox" required>
+    <label for="prefer-nick">  Nickname preferred</label>
+
+    <div hidden id = "input-nick">
+      <p> Enter Nickname*</p>
+      <input id = "nick" type = "text" placeholder="Nickname">
+      <h5> *Nickname replaces name in call </h5>
+    </div>
+    <button id = "create-profile">Create Profile</button>
+  </div> <!--end of input-name -->
+  
+
+  <div hidden id = "input-event-page">
+    <p id = input-header></p> 
+    <p>Meeting Info:</p>
+    <input id = "event" type = "text" required>
+    <input id = "start-date" type = "date" required>
+    <input id = "end-date" type = "date" required>
+    <input id = "start-time" type = "time" required>
+    <input id = "end-time" type = "time" required>
+    <p>Zoom Info:</p>
+    <input id = "link" type = "text" required placeholder="https://zoom...">
+    <input id = "pass" type = "text" required placeholder="Password">
+    <button id = "submit-new">Submit</button>
+    <!--only when editing(submit is going to be hidden)-->
+    <button id = "submit-edit" hidden >Edit Event</button>
+  </div>
+
+  
+  <div hidden id = "all-events"></div>
+
+<script src = "popup.js"></script>
+
+
+</body>
+</html>
