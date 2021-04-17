@@ -39,13 +39,24 @@
   <div hidden id = "input-event-page">
     <p id = input-header></p> 
     <p>Meeting Info:</p>
+    <label for="event">Event Name</label>
     <input id = "event" type = "text" required>
+    <br>
+    <label for="start-date">Start Date</label>
     <input id = "start-date" type = "date" required>
+    <br>
+    <label for="end-date">End Date</label>
     <input id = "end-date" type = "date" required>
+    <br>
+    <label for="start-date">Start Time:</label>
     <input id = "start-time" type = "time" required>
+    <br>
+    <label for="end-time">End Time  :</label>
     <input id = "end-time" type = "time" required>
     <p>Zoom Info:</p>
+    <label for="link">Link</label>
     <input id = "link" type = "text" required placeholder="https://zoom...">
+    <label for="pass">Pass</label>
     <input id = "pass" type = "text" required placeholder="Password">
     <button id = "submit-new">Submit</button>
     <!--only when editing(submit is going to be hidden)-->

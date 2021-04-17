@@ -108,10 +108,10 @@ function displayWelcome(){
 // ------------- profile page listeners
 NICKNAME_CHECKBOX.addEventListener("click", function(){
   if(NICKNAME_CHECKBOX.checked){
-    NICKNAME_INPUT_CONTAINER.hidden=false; 
+    NICKNAME_INPUT_CONTAINER.hidden = false; 
   }
   else{
-    NICKNAME_INPUT_CONTAINER.hidden=true;
+    NICKNAME_INPUT_CONTAINER.hidden = true;
   }
 })
 
@@ -127,9 +127,36 @@ CREATE_PROFILE_BTN.addEventListener("click", function(){
   }
   openMain();
   displayWelcome();
-  storeProfile();  
-  
+  storeProfile();
+  INPUT_PROFILE_PAGE.hidden = true;
 })
+
+
+
+//-----------------Create event-------------------------
+CREATE_EVENT_BTN.addEventListener('click', function () {
+  showInput();
+  //openInput();
+  SUBMIT_BTN.hidden = false;
+  //PRESET VALUES
+  let tempTime =  getCurrentTime();
+  let tempDate = getCurrentDate();
+  EVENT_NAME_INPUT.value = "165";
+  EVENT_START_DATE_INPUT.value = tempDate;
+  EVENT_END_DATE_INPUT.value = tempDate;
+  EVENT_START_TIME_INPUT.value  = tempTime;
+  EVENT_END_TIME_INPUT.value  = tempTime;
+  ZOOM_LINK_INPUT.value = "https://cccconfer.zoom.us/j/98359639686";
+  ZOOM_PASS_INPUT.value = "5N#DA@";
+})
+
+// click "main" button
+//----------------------------------------
+GO_TO_MAIN_BTN.addEventListener('click',function(){
+  openMain();
+  });
+  
+
 
 
 
@@ -206,9 +233,6 @@ document.getElementById('clear-memory').addEventListener('click', clearMemory);
   chrome.storage.sync.remove(['array'], result => {
     console.log('array cleared');
 });
-chrome.storage.sync.remove(['count'], result => {
-  console.log('count cleared');
-});
 chrome.storage.sync.remove(['profile'], result => {
   console.log('profile cleared' + result);
 });
@@ -261,16 +285,17 @@ function populateInputFeilds(index){
 //--------------------hiding--------------------------------------
 
 function openMain(){
-
   showMain();
   //if input is being shown - hide it
   if(!INPUT_EVENTS_PAGE.hidden){
     hideInput();
   }
+  else if(!INPUT_PROFILE_PAGE.hidden){
+    INPUT_PROFILE_PAGE.hidden=true;
+  }
   else{
     hideEvents();
   }
-    
 }
 
 function openInput(){
@@ -302,20 +327,21 @@ function hideMain(){
 }
 function showMain(){
   MAIN_PAGE.hidden = false;
-  updateViewOfCount();
-  SUBMIT_EDIT_BTN.hidden = true;
-  
+  //updateViewOfCount();  
 }
+
+//when i want to hided eidt
+//SUBMIT_EDIT_BTN.hidden = true;
 
 //input
 function showInput(){
-  INPUT_PROFILE_PAGE.hidden = false;
+  INPUT_EVENTS_PAGE.hidden = false;
   GO_TO_MAIN_BTN.hidden = false; 
-  SUBMIT_EDIT_BTN.hidden =true;
 }
+
 function hideInput(){
   GO_TO_MAIN_BTN.hidden = true;
-  INPUT_PROFILE_PAGE.hidden = true;
+  INPUT_EVENTS_PAGE.hidden = true;
 }
 
 //events
@@ -328,7 +354,7 @@ function showEvents(){
 function hideEvents(){
   VIEW_EVENTS_PAGE.hidden = true;
   GO_TO_MAIN_BTN.hidden = true;
-  updateViewOfCount();
+  //updateViewOfCount();
 }
 
 
