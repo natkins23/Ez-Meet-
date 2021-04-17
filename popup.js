@@ -50,6 +50,7 @@ document.body.onload = function() {
   // });
 
   updateLocalProfile(profileValdiation,storeProfile,displayWelcome);
+  updateLocalEvents();
   COUNT_VIEW.hidden =false;
   //check profile object
 };
@@ -135,7 +136,7 @@ CREATE_PROFILE_BTN.addEventListener("click", function(){
 
 //-----------------Create event-------------------------
 CREATE_EVENT_BTN.addEventListener('click', function () {
-  showInput();
+  openInput();
   //openInput();
   SUBMIT_BTN.hidden = false;
   //PRESET VALUES
@@ -156,6 +157,34 @@ GO_TO_MAIN_BTN.addEventListener('click',function(){
   openMain();
   });
   
+
+  
+
+// click "submit" button
+//creates the event
+//----------------------------------------
+SUBMIT_BTN.addEventListener('click', function() {
+  //input validation
+  if(MeetingFilled() && ZoomFilled()){
+     let tempEvent = {};
+    //fill up the tempEvent
+    tempEvent.eventName = document.getElementById("event").value;
+    tempEvent.zoomLink = document.getElementById("link").value;
+    tempEvent.zoomPass = document.getElementById("pass").value;
+    tempEvent.startDate = document.getElementById("start-date").value;
+    tempEvent.endDate = document.getElementById("end-date").value;
+    tempEvent.startTime = document.getElementById("start-time").value;
+    tempEvent.endTime = document.getElementById("end-time").value;
+    tempEvent.uuid = Date.now();
+    
+    //saveChanges();
+    arrayOfEvents.push(tempEvent); 
+    openMain(); 
+    storeEvents();
+    //reveal the number of events created
+
+  }//validation
+}); // end of sumbit
 
 
 
@@ -272,12 +301,13 @@ function getCurrentTime(){
 function populateInputFeilds(index){
   let curEvent = arrayOfEvents[index];
   
-  zoomLinkInput.setAttribute("placeholder",curEvent.zoomLink)
-  zoomPassInput.setAttribute("placeholder",curEvent.zoomPass)
-  eventNameInput.setAttribute("placeholder",curEvent.eventName)
-  eventDateInput.setAttribute("placeholder",curEvent.date)
-  eventEndTimeInput.setAttribute("placeholder",curEvent.startTime)
-  eventStartTimeInput.setAttribute("placeholder",curEvent.endTime)
+  ZOOM_LINK_INPUT.setAttribute("placeholder",curEvent.zoomLink)
+  ZOOM_PASS_INPUT.setAttribute("placeholder",curEvent.zoomPass)
+  EVENT_NAME_INPUT.setAttribute("placeholder",curEvent.eventName)
+  EVENT_START_DATE_INPUT.setAttribute("placeholder",curEvent.startDate)
+  EVENT_END_DATE_INPUT.setAttribute("placeholder",curEvent.endDate)
+  EVENT_START_TIME_INPUT.setAttribute("placeholder",curEvent.startTime)
+  EVENT_END_TIME_INPUT.setAttribute("placeholder",curEvent.endTime)
 }
 
 
@@ -363,4 +393,57 @@ function hideEvents(){
 function updateViewOfCount(){
   let size = arrayOfEvents.length;
   COUNT_VIEW.textContent = "Event Count: " + size;
+}
+
+
+
+
+
+function NameFilled(){
+  // let infoValid;
+  // if(firstNameInput.value !="" && lastNameInput.value !=""){
+  //   infoValid = true;
+  // }
+  //   else{
+  //     infoValid = false;
+  //   }
+  //   return infoValid
+  return true;
+}
+
+function MeetingFilled(){
+  let infoValid;
+  if(EVENT_NAME_INPUT.value !="" && EVENT_START_DATE_INPUT.value !="" && EVENT_END_DATE_INPUT.value !="" && EVENT_START_TIME_INPUT.value !="" && EVENT_END_TIME_INPUT.value !=""){
+    infoValid = true;
+  }
+    else{
+      infoValid = false;
+    }
+    return infoValid;
+
+}
+function ZoomFilled(){
+  let infoValid;
+  if(ZOOM_LINK_INPUT.value !="" && ZOOM_PASS_INPUT.value !="" && ZoomlinkLogic()){
+    infoValid = true;
+  }
+    else{
+      infoValid = false;
+    }
+    return infoValid;
+}
+
+//logic for zoom link not large enough
+function ZoomlinkLogic(){
+  // console.log("PENISSSSSSSSSSSSS");
+  // let infoValid;
+  // if ((link.value.length < 50) && pass.value == ""){
+  //   alert("Link not long enough, enter a link with a password or enter a password")
+  //   infoValid = false;
+  // } 
+  // else{
+  //   infoValid = true;
+  // }
+  // return infoValid;
+  return true;
 }
