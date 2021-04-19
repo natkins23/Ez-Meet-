@@ -41,24 +41,17 @@
 
 
 //---------------------------VIEW EVENTS------------------------------
- const VIEW_EVENTS_PAGE = document.getElementById("view-events-page");
+ const EVENTS_PAGE = document.getElementById("events-page");
 
 let profile = {};
 let arrayOfEvents = [];
+let indexOfEditingEvent = null;
 
 //------------------page load --------------------
 document.body.onload = function() {
-  //if there is no profile, make one
-  // chrome.storage.sync.remove(['profile'], () => {
-  //   console.log('profile cleared');
-  // });
-
   updateLocalProfile(profileValdiation,storeProfile,displayWelcome);
   updateLocalEvents();
-  COUNT_VIEW.hidden =true;
-  //check profile object
 };
-
 
 function updateLocalProfile(valid,store,display){
   chrome.storage.sync.get(['profile'], function(result) {
@@ -158,6 +151,9 @@ EDIT_PROFILE_BTN.addEventListener("click",function(){
 
 //-----------------Create event-------------------------
 CREATE_EVENT_BTN.addEventListener('click', function () {
+  if(SUBMIT_BTN.textContent = "Edit Event"){
+    SUBMIT_BTN.textContent = "Create Event";
+  }
   openInput();
   //openInput();
   SUBMIT_BTN.hidden = false;
@@ -187,95 +183,167 @@ GO_TO_MAIN_BTN.addEventListener('click',function(){
 //creates the event
 //----------------------------------------
 SUBMIT_BTN.addEventListener('click', function() {
-  //input validation
-  if(MeetingFilled() && ZoomFilled()){
-     let tempEvent = {};
-    //fill up the tempEvent
-    tempEvent.eventName = document.getElementById("event").value;
-    tempEvent.zoomLink = document.getElementById("link").value;
-    tempEvent.zoomPass = document.getElementById("pass").value;
-    tempEvent.startDate = document.getElementById("start-date").value;
-    tempEvent.endDate = document.getElementById("end-date").value;
-    tempEvent.startTime = document.getElementById("start-time").value;
-    tempEvent.endTime = document.getElementById("end-time").value;
-    tempEvent.uuid = Date.now();
-    
-    //saveChanges();
-    arrayOfEvents.push(tempEvent); 
-    openMain(); 
+  let emptyEvent = {};
+  //if we're editing an event
+  if(indexOfEditingEvent){
+    let eventToEdit = arrayOfEvents[indexOfEditingEvent];
+    console.log(eventToEdit);
+    fillObject(eventToEdit);
+    openMain();
     storeEvents();
-    //reveal the number of events created
-
-  }//validation
+  }
+  //were making a new event
+  else{
+    fillObject(emptyEvent);
+    openMain();
+    arrayOfEvents.push(emptyEvent); 
+    storeEvents(); 
+  }
+  //input validation
+  function fillObject(tempEvent){
+    if(MeetingFilled() && ZoomFilled()){
+      //fill up the tempEvent
+      tempEvent.eventName = document.getElementById("event").value;
+      tempEvent.zoomLink = document.getElementById("link").value;
+      tempEvent.zoomPass = document.getElementById("pass").value;
+      tempEvent.startDate = document.getElementById("start-date").value;
+      tempEvent.endDate = document.getElementById("end-date").value;
+      tempEvent.startTime = document.getElementById("start-time").value;
+      tempEvent.endTime = document.getElementById("end-time").value;
+      tempEvent.uuid = Date.now();
+    }//validation
+  }//end of fill Event
 }); // end of sumbit
 
 
 
 
 
-//might be obsolete if i return the value in the update function
-// //set
-// function storeLocal(){
-//   storeProfile();
-//   storeEvents();
-//   storeEventsCreatedCount();
-// }
-// //get
-// function updateLocal(){
-//   updateLocalProfile();
-//   updateLocalEvents();
-//   updateLocalEventsCreatedCount();
-// }
+// click view listener - button - will actually be creating the DOM elements
+//----------------------------------------
+VIEW_EVENT_BTN.addEventListener('click',function(){
+  indexOfEditingEvent = null;
+  openEvents();
+  //get number of events
+  let arrSize = arrayOfEvents.length;
+  let printedEvents = 0;
+  
+  //get number of dom events
+  let allChildElements = EVENTS_PAGE.children;
 
-//-----------------Profile------------------
+    //loop to get the number of elements in the dom
+  for(let i =0; i<allChildElements.length; i++){
+    if (allChildElements[i].nodeName == "DIV"){
+      printedEvents++;
+    }
+  }
+ //if there are more events in array than in dom, create elements in DOM from the count of the elements Created in dom
+  if (arrSize>printedEvents){
+    for(let i = printedEvents; i<arrSize;i++){
+      //pass an index to the create event function, which makes the DOM event for the event object at that index of the arrayOfEvents array.
+      createEventElement(i);
+    }
+  }
+ 
+ 
+  //must have elements when deleted, remove them selves from the array of events
+
+  //not sure if necessary
+  //updateLocalEvents(createEventElement);
+
+  function createEventElement(index){
+    let curEvent = arrayOfEvents[index];
+    console.log(curEvent);
+    //new event container
+    let NEW_EVENT = document.createElement("div");
+    EVENTS_PAGE.appendChild(NEW_EVENT);
+
+    //Event Details
+    let EVENT_NAME_PARA = document.createElement("p");
+    EVENT_NAME_PARA.textContent = "Event : " + curEvent.eventName;
+    NEW_EVENT.appendChild(EVENT_NAME_PARA);
+
+    //delete Button
+    let DELETE_EVENT_BTN = document.createElement("button");
+    DELETE_EVENT_BTN.textContent = "x";
+    EVENT_NAME_PARA.appendChild(DELETE_EVENT_BTN);
+    DELETE_EVENT_BTN.addEventListener('click', function(e) {
+      //remove deleted event from array of events
+      arrayOfEvents.splice(index,1);
+      //remove the div
+      EVENTS_PAGE.removeChild(NEW_EVENT);
+      //update the store array
+      storeEvents();
+    })
+
+    //edit Button
+    let EDIT_EVENT_BTN = document.createElement("button");
+    EDIT_EVENT_BTN.textContent = "Edit";
+    EVENT_NAME_PARA.appendChild(EDIT_EVENT_BTN);
+    EDIT_EVENT_BTN.addEventListener('click', function() {
+      SUBMIT_BTN.textContent = "Edit Event";
+      hideEvents();
+      showInput();
+      populateInputFeilds(curEvent);
+      console.log(indexOfEditingEvent);
+      indexOfEditingEvent = index;
+      console.log(indexOfEditingEvent);
+    });
+  
+  //creating elements f    
+  let EVENT_LINK_PARA = document.createElement("p");
+  EVENT_LINK_PARA.textContent = "Zoom link: " + curEvent.zoomLink;
+  NEW_EVENT.appendChild(EVENT_LINK_PARA);
+  
+  let EVENT_PASS_PARA = document.createElement("p");
+  EVENT_PASS_PARA.textContent = "Zoom pass: " + curEvent.zoomPass;
+  NEW_EVENT.appendChild(EVENT_PASS_PARA);
 
 
-// async function updateLocalProfile(){
-//   let myPromise = new Promise(function(myResolve) {
-//     chrome.storage.sync.get(['profile'], function(result) {
-//       myResolve(result.profile);
-//     })
-//   })
-//   profile = await myPromise;
-// }
+  let EVENT_START_DATE_PARA = document.createElement("p");
+  EVENT_START_DATE_PARA.textContent = "Start Date: " + curEvent.startDate;
+  NEW_EVENT.appendChild(EVENT_START_DATE_PARA);
 
+  let EVENT_END_DATE_PARA = document.createElement("p");
+  EVENT_END_DATE_PARA.textContent = "End Date: " + curEvent.endDate;
+  NEW_EVENT.appendChild(EVENT_END_DATE_PARA);
 
+  let EVENT_START_TIME_PARA = document.createElement("p");
+  EVENT_START_TIME_PARA.textContent = "Start Time: " + curEvent.startTime;
+  NEW_EVENT.appendChild(EVENT_START_TIME_PARA);
 
+  let EVENT_END_TIME_PARA = document.createElement("p");
+  EVENT_END_TIME_PARA.textContent ="End Time: " + curEvent.endTime;
+  NEW_EVENT.appendChild(EVENT_END_TIME_PARA);
 
-  //potential async/await approach
-// function updateLocalProfile(){
-//   return myPromise = new Promise(function(myResolve) {
-//     chrome.storage.sync.get(['profile'], function(result) {
-//       console.log("in updateLocalProfile" + result.profile.penis);
-//       myResolve(result.profile);
-//     })
-//   })
-// }
+ }//end of createEventElement function
+})//end of view.addEventListener
 
-// async function newProfile(){
-//   profile = await updateLocalProfile();
-//   console.log("in newProlfle: " + profile.penis);
-// }
-
-
-
+function updateEventCountHTML(){
+  let eventCount = arrayOfEvents.length;
+  COUNT_VIEW.textContent = "Event Count : " + eventCount; 
+}  
 //-----------------Events Array------------------
  function storeEvents(){
   chrome.storage.sync.set({array: arrayOfEvents}, function() {
     console.log('Array stored:' + arrayOfEvents);
+    updateEventCountHTML(); 
   });
+
 }
+//will update the dom count as well as the array holding the event objects
  function updateLocalEvents(){
-  chrome.storage.sync.get(['array'], function(result) {
-    //if result key is undefined  
-    arrayOfEvents = result.array; 
-    if(!arrayOfEvents){
-        arrayOfEvents = [];
-      }
-  });
-  console.log("Updated Local Array: ");
-  console.log(arrayOfEvents);
-}
+    chrome.storage.sync.get(['array'], function(result) {
+      //if result key is undefined  
+      arrayOfEvents = result.array; 
+      if(!arrayOfEvents){
+          arrayOfEvents = [];
+        }
+      updateEventCountHTML();
+      console.log("Updated Local Array: ");
+      console.log(arrayOfEvents);
+    })
+ }
 
 //click clear memory
 document.getElementById('clear-memory').addEventListener('click', clearMemory);
@@ -292,14 +360,6 @@ chrome.storage.sync.remove(['profile'], result => {
 
 }
 //------------------------Helpers-----------------------------------
- function findObjectByCreatedCount(id){
-  for(let i = 0; i<arrayOfEvents.length; i++){
-    if(arrayOfEvents[i].countId = id){
-      return i;
-    }
-  }
-}
-
 
 
 
@@ -321,16 +381,14 @@ function getCurrentTime(){
   return time;
 }
 
-function populateInputFeilds(index){
-  let curEvent = arrayOfEvents[index];
-  
-  ZOOM_LINK_INPUT.setAttribute("placeholder",curEvent.zoomLink)
-  ZOOM_PASS_INPUT.setAttribute("placeholder",curEvent.zoomPass)
-  EVENT_NAME_INPUT.setAttribute("placeholder",curEvent.eventName)
-  EVENT_START_DATE_INPUT.setAttribute("placeholder",curEvent.startDate)
-  EVENT_END_DATE_INPUT.setAttribute("placeholder",curEvent.endDate)
-  EVENT_START_TIME_INPUT.setAttribute("placeholder",curEvent.startTime)
-  EVENT_END_TIME_INPUT.setAttribute("placeholder",curEvent.endTime)
+function populateInputFeilds(curEvent){
+  ZOOM_LINK_INPUT.value = curEvent.zoomLink;
+  ZOOM_PASS_INPUT.value = curEvent.zoomPass;
+  EVENT_NAME_INPUT.value = curEvent.eventName;
+  EVENT_START_DATE_INPUT.value = curEvent.startDate;
+  EVENT_END_DATE_INPUT.value = curEvent.endDate;
+  EVENT_START_TIME_INPUT.value = curEvent.startTime;
+  EVENT_END_TIME_INPUT.value = curEvent.endTime;
 }
 
 
@@ -345,6 +403,7 @@ function openProfileEdit(){
   WELCOME.hidden = true;
   COUNT_VIEW.hidden = true;
 }
+
 
 function openMain(){
 
@@ -388,16 +447,13 @@ function openEvents(){
 function hideMain(){
   MAIN_PAGE.hidden = true;
   EDIT_PROFILE_BTN.hidden = true;
+  WELCOME.hidden =true;
 }
 function showMain(){
   COUNT_VIEW.hidden =false;
   MAIN_PAGE.hidden = false;
   EDIT_PROFILE_BTN.hidden = false;
-  //updateViewOfCount();  
 }
-
-//when i want to hided eidt
-//SUBMIT_EDIT_BTN.hidden = true;
 
 //input
 function showInput(){
@@ -412,15 +468,13 @@ function hideInput(){
 
 //events
 function showEvents(){
-  VIEW_EVENTS_PAGE.hidden = false;
+  EVENTS_PAGE.hidden = false;
   GO_TO_MAIN_BTN.hidden = false; 
-  SUBMIT_EDIT_BTN.hidden = true;
   COUNT_VIEW.hidden = false;
 }
 function hideEvents(){
-  VIEW_EVENTS_PAGE.hidden = true;
+  EVENTS_PAGE.hidden = true;
   GO_TO_MAIN_BTN.hidden = true;
-  //updateViewOfCount();
 }
 
 
