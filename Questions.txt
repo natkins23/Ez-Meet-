@@ -1,0 +1,5 @@
+ Globals:
+ Do i need to have a gloabl profile???
+\Thoughts: It seems i would have no way to fill a profile object when I would want to 
+LIES - got rid of that shit
+

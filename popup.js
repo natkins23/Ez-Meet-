@@ -1,21 +1,17 @@
-//                     DOM elements (order of HTML)
-//-----------------------ON ALL PAGES----------------------------
+//                   DOM elements (order of HTML)
+//ON ALL PAGES
 //button
  const GO_TO_MAIN_BTN = document.getElementById("back-to-main");
  const CLEAR = document.getElementById("clear-memory");
-
 // paras
  const WELCOME = document.getElementById("welcome");
  const COUNT_VIEW = document.getElementById("event-count-view");
-
-//-----------------------UNIQUE PAGES-------------------------------
+//UNIQUE PAGES
 //----------------------------MAIN----------------------------------
  const MAIN_PAGE= document.getElementById("main-menu-page");
  const CREATE_EVENT_BTN = document.getElementById("create");
  const VIEW_EVENT_BTN = document.getElementById("view");
  const EDIT_PROFILE_BTN = document.getElementById("edit-profile");
-
-
 //------------------------CREATE PROFILE----------------------------------
  const INPUT_PROFILE_PAGE = document.getElementById("input-profile-page");
  const PROFILE_INPUT_MSG = document.getElementById("profile-input-message");
@@ -25,8 +21,6 @@
  const NICKNAME_INPUT_CONTAINER = document.getElementById("input-nick");
  const NICKNAME_INPUT = document.getElementById("nick");
  const CREATE_PROFILE_BTN = document.getElementById("create-profile");
- 
-
 //-----------------------------INPUT------------------------------------
  const INPUT_EVENTS_PAGE = document.getElementById("input-event-page");
  const INPUT_HEADER = document.getElementById("input-header");
@@ -38,69 +32,65 @@
  const ZOOM_LINK_INPUT = document.getElementById("link");
  const ZOOM_PASS_INPUT = document.getElementById("pass");
  const SUBMIT_BTN = document.getElementById("submit");
-
-
 //---------------------------VIEW EVENTS------------------------------
  const EVENTS_PAGE = document.getElementById("events-page");
 
-let profile = {};
+
+ //get rid of this object
 let arrayOfEvents = [];
 let indexOfEditingEvent = null;
 
 //------------------page load --------------------
 document.body.onload = function() {
-  updateLocalProfile(profileValdiation,storeProfile,displayWelcome);
+  checkAndSetupProfile();
+  //have not refactored local events
   updateLocalEvents();
 };
 
-function updateLocalProfile(valid,store,display){
+
+///----REFACTORED
+//gets profile
+//either exists and goes to main
+//or stores an empty profile object
+function checkAndSetupProfile(){
   chrome.storage.sync.get(['profile'], function(result) {
-    profile = result.profile;
-    //profile should be empty (on first run)
-    valid();
-    store();
-    display();
+    let profile = result.profile;
+    //profile exists, go to mainMenu
+    if (profile.first){
+      updateWelcome(profile);
+      gotoMainMenu();
+    }
+    //OR - profile DOESNT exists, and you make a temp profile
+    else{
+      profile = {};
+      storeProfile(profile);
+      //TESTING - preseting profile inputs for purposes of testing
+      presetProfileInputs();
+    }
   })
-}
+//-------------Update Local Profile Functions--------------
+  //temporary
+  function presetProfileInputs(){
+      FIRST_NAME_INPUT.value = "Nathan";
+      LAST_NAME_INPUT.value = "Watkins";
+      NICKNAME_INPUT.value = "Nate-dog";
+    }
+}//END UPDATE LOCAL PROFILE - REFACTORED
 
-function profileValdiation(){
-  if (!profile){
-    profile= {};
-    console.log("No profile in storage, made a new Profile Object");
-  }
-  //there is a profile
-  //profile exists
-  if(profile.first){
-    console.log("profile already existed" + profile.first);
-    showMain();
-    INPUT_PROFILE_PAGE.hidden = true;
-  }
-  //profile is empty
-  else{
-    console.log("profile is empty");
-    FIRST_NAME_INPUT.value = "Nathan";
-    LAST_NAME_INPUT.value = "Watkins";
-    NICKNAME_INPUT.value = "Nate-dog";
-  }
-}
-function storeProfile(){
-  chrome.storage.sync.set({profile: profile}, function() {
-   });
-}
 
-function displayWelcome(){
+function updateWelcome(profile){
   if(profile.nick){
     WELCOME.textContent = "Welcome " + profile.nick + "!";
-    WELCOME.hidden = false;
+    
   }
   else if (profile.first){
     WELCOME.textContent = "Welcome " + profile.first + "!";
-    WELCOME.hidden = false;
   }
   else{
-    WELCOME.hidden = true;
+    console.log("ERROR THERE IS NO PROFILE! UPDATEWELCOME HAS NO PROFILE");
   }
 }
+
 
 // ------------- profile page listeners
 NICKNAME_CHECKBOX.addEventListener("click", function(){
@@ -114,47 +104,81 @@ NICKNAME_CHECKBOX.addEventListener("click", function(){
   }
 })
 
-// ----------------- Create Profile---------------------
-CREATE_PROFILE_BTN.addEventListener("click", function(){ 
-  
-  if(NameFilled()){
-    console.log("working");
-    profile.first = FIRST_NAME_INPUT.value;
-    profile.last = LAST_NAME_INPUT.value;
-    if (NICKNAME_CHECKBOX.checked){
-      profile.nick = NICKNAME_INPUT.value;
+EDIT_PROFILE_BTN.addEventListener("click",function(){
+  chrome.storage.sync.get(['profile'], function(result) {
+    profile = result.profile;
+    FIRST_NAME_INPUT.value = profile.first;
+    LAST_NAME_INPUT.value = profile.last;
+    NICKNAME_INPUT.value = profile.nick;
+    if(profile.nick){
+      NICKNAME_CHECKBOX.checked = true;  
     }
     else{
-      profile.nick = null;
+      NICKNAME_CHECKBOX.checked = false; 
     }
-    console.log(profile.name);
-    openMain();
-    storeProfile();
-    displayWelcome();
-    INPUT_PROFILE_PAGE.hidden = true;
-    GO_TO_MAIN_BTN.hidden = true;
-    
-  }
+  })
+  
+  //currently no implementation to change these elements BACK to create instead of edit
+  //this is because once a profile exists, you can only edit it anyways
+  //if we offer a way to delete a profile, we then need to change it back and forth
+  PROFILE_INPUT_MSG.textContent = "Editing your profile";
+  CREATE_PROFILE_BTN.textContent = "Edit Profile";
+  //open the profile edit menu
+  gotoProfileInput();
 })
 
-function createProfile(){
-  
+//---REFACTORING --  Create Profile --- 
+
+//GETS PROFILE FROM STROAGE
+//FILLS the pulled profile WITH THE (valid) input
+//STORES the profile
+//UPDATES WELCOME
+CREATE_PROFILE_BTN.addEventListener("click", function(){ 
+  //GETS PROFILE FROM STROAGE
+  if(NameInputFilled()){
+    chrome.storage.sync.get(['profile'], function(result) {
+      let profile = result.profile;
+      fill(profile);
+      storeProfile(profile);
+      updateWelcome();
+      gotoMainMenu();
+
+      //------helper functions---
+      function fill(p){
+        p.first = FIRST_NAME_INPUT.value;
+        p.last = LAST_NAME_INPUT.value;
+        if (NICKNAME_CHECKBOX.checked){
+          p.nick = NICKNAME_INPUT.value;
+        }
+        else{
+          p.nick = null;
+        }
+      }//fill
+
+    })//sync;
+
+  }//Name input validation
+
+})//end Listener
+
+
+
+
+//might need to change p to profile
+//takes a profile - always called in another function
+function storeProfile(p){
+  chrome.storage.sync.set({profile: p}, function() {
+   });
 }
 
-EDIT_PROFILE_BTN.addEventListener("click",function(){
-  CREATE_PROFILE_BTN.textContent = "Edit Profile";
-  PROFILE_INPUT_MSG.textContent = "Editing your profile";
-  //open the profile edit menu
-  openProfileEdit();
-})
-
+//^^^^^^^^^^^^^^^^^^^^^^^PROFILE REFACTORED^^^^^^^^^^^^^^^^^^^^^^^^^
 
 //-----------------Create event-------------------------
 CREATE_EVENT_BTN.addEventListener('click', function () {
   if(SUBMIT_BTN.textContent = "Edit Event"){
     SUBMIT_BTN.textContent = "Create Event";
   }
-  openInput();
+  gotoEventInputMenu();
   //openInput();
   SUBMIT_BTN.hidden = false;
   //PRESET VALUES
@@ -172,7 +196,7 @@ CREATE_EVENT_BTN.addEventListener('click', function () {
 // click "main" button
 //----------------------------------------
 GO_TO_MAIN_BTN.addEventListener('click',function(){
-  openMain();
+  gotoMainMenu();
   GO_TO_MAIN_BTN.hidden = true;
   });
   
@@ -189,13 +213,13 @@ SUBMIT_BTN.addEventListener('click', function() {
     let eventToEdit = arrayOfEvents[indexOfEditingEvent];
     console.log(eventToEdit);
     fillObject(eventToEdit);
-    openMain();
+    gotoMainMenu();
     storeEvents();
   }
   //were making a new event
   else{
     fillObject(emptyEvent);
-    openMain();
+    gotoMainMenu();
     arrayOfEvents.push(emptyEvent); 
     storeEvents(); 
   }
@@ -223,7 +247,7 @@ SUBMIT_BTN.addEventListener('click', function() {
 //----------------------------------------
 VIEW_EVENT_BTN.addEventListener('click',function(){
   indexOfEditingEvent = null;
-  openEvents();
+  gotoEventsMenu();
   //get number of events
   let arrSize = arrayOfEvents.length;
   let printedEvents = 0;
@@ -346,21 +370,19 @@ function updateEventCountHTML(){
  }
 
 //click clear memory
-document.getElementById('clear-memory').addEventListener('click', clearMemory);
-
-
- function clearMemory(){
-  chrome.storage.sync.remove(['array'], result => {
-    console.log('array cleared');
-});
-chrome.storage.sync.remove(['profile'], result => {
-  console.log('profile cleared' + result);
-});
-
-
-}
+CLEAR.addEventListener('click', clearMemory);
 //------------------------Helpers-----------------------------------
 
+//can call in console
+function clearMemory(){
+  chrome.storage.sync.remove(['array'], result => {
+    console.log('array cleared');
+  });
+  chrome.storage.sync.remove(['profile'], result => {
+    console.log('profile cleared' + result);
+  });
+
+}
 
 
 //--------PRESET TIME FORMATTING---------------
@@ -393,56 +415,52 @@ function populateInputFeilds(curEvent){
 
 
 
-//--------------------hiding--------------------------------------
+//--------------------HIDING MENUS LOGIC--------------------------
 
-function openProfileEdit(){
+//-----------------Tranitions----------------------------
+//going to main
+function gotoMainMenu(){
+  showMain();
+  hideProfileInput();
+  hideInput();
+  hideEvents();
+}
+
+//going to Event Input
+function gotoEventInputMenu(){
+  showInput();
   hideMain();
+  hideEvents();
+}
+function gotoEventsMenu(){
+  showEvents();
+  hideMain();
+  hideInput();
+}
+
+//going to ProfileInput
+function gotoProfileInput(){
+  hideMain();
+  showProfileINput();
+}
+
+//-----------Transition Helpers-------------------------
+//profile
+function hideProfileInput(){
+  INPUT_PROFILE_PAGE.hidden = true;
+  GO_TO_MAIN_BTN.hidden = true;
+  COUNT_VIEW.hidden = false;
+  EDIT_PROFILE_BTN.hidden = false;
+  WELCOME.hidden = false;
+}
+function showProfileINput(){
   INPUT_PROFILE_PAGE.hidden = false;
   GO_TO_MAIN_BTN.hidden = false;
+  COUNT_VIEW.hidden = true;
   EDIT_PROFILE_BTN.hidden = true;
   WELCOME.hidden = true;
-  COUNT_VIEW.hidden = true;
 }
 
-
-function openMain(){
-
-  showMain();
-  //if input is being shown - hide it
-  if(!INPUT_EVENTS_PAGE.hidden){
-    hideInput();
-  }
-  else if(!INPUT_PROFILE_PAGE.hidden){
-    INPUT_PROFILE_PAGE.hidden=true;
-  }
-  else{
-    hideEvents();
-  }
-}
-
-function openInput(){
-  showInput();
-  //if main is being shown - hide it
-  if(!MAIN_PAGE.hidden){
-    hideMain();
-  }
-  else{
-    hideEvents();
-  }
-}
-
-function openEvents(){
-  showEvents();
-  //if main is being shown - hide it
-  if(!MAIN_PAGE.hidden){
-    hideMain();
-  }
-  else{
-    hideInput();
-  }
-}
-
-// ------------hiding helpers-------------------------
 //main
 function hideMain(){
   MAIN_PAGE.hidden = true;
@@ -450,9 +468,12 @@ function hideMain(){
   WELCOME.hidden =true;
 }
 function showMain(){
+  INPUT_PROFILE_PAGE.hidden = true;
   COUNT_VIEW.hidden =false;
   MAIN_PAGE.hidden = false;
   EDIT_PROFILE_BTN.hidden = false;
+  GO_TO_MAIN_BTN.hidden = true;
+  WELCOME.hidden = false;
 }
 
 //input
@@ -477,19 +498,19 @@ function hideEvents(){
   GO_TO_MAIN_BTN.hidden = true;
 }
 
+//-------END HIDING------------------------------------------------
 
-//-----------------Hiding Helpers Helpers
+
+
+
 
 function updateViewOfCount(){
   let size = arrayOfEvents.length;
   COUNT_VIEW.textContent = "Event Count: " + size;
 }
 
-
-
-
-
-function NameFilled(){
+//------------------Validation-------------------------------
+function NameInputFilled(){
   console.log("nameFilled is Called");
   let infoValid;
   if(FIRST_NAME_INPUT.value !="" && LAST_NAME_INPUT.value !=""){
