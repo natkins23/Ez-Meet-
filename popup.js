@@ -9,29 +9,31 @@
 //UNIQUE PAGES
 //----------------------------MAIN----------------------------------
  const MAIN_PAGE= document.getElementById("main-menu-page");
- const CREATE_EVENT_BTN = document.getElementById("create");
+ const NEW_EVENT_BTN = document.getElementById("new-event");
  const VIEW_EVENT_BTN = document.getElementById("view");
  const EDIT_PROFILE_BTN = document.getElementById("edit-profile");
 //------------------------CREATE PROFILE----------------------------------
  const INPUT_PROFILE_PAGE = document.getElementById("input-profile-page");
  const PROFILE_INPUT_MSG = document.getElementById("profile-input-message");
- const FIRST_NAME_INPUT = document.getElementById("fname");
- const LAST_NAME_INPUT = document.getElementById("lname");
+ const FIRST_NAME_INPUT_FEILD = document.getElementById("fname");
+ const LAST_NAME_INPUT_FEILD = document.getElementById("lname");
  const NICKNAME_CHECKBOX = document.getElementById("prefer-nick");
- const NICKNAME_INPUT_CONTAINER = document.getElementById("input-nick");
- const NICKNAME_INPUT = document.getElementById("nick");
+ const NICKNAME_INPUT_FEILD_CONTAINER = document.getElementById("input-nick");
+ const NICKNAME_INPUT_FEILD = document.getElementById("nick");
  const CREATE_PROFILE_BTN = document.getElementById("create-profile");
 //-----------------------------INPUT------------------------------------
  const INPUT_EVENTS_PAGE = document.getElementById("input-event-page");
  const INPUT_HEADER = document.getElementById("input-header");
- const EVENT_NAME_INPUT = document.getElementById("event");
- const EVENT_START_DATE_INPUT = document.getElementById("start-date");
- const EVENT_END_DATE_INPUT = document.getElementById("end-date");
+ const EVENT_NAME_TEXT_FEILD = document.getElementById("event");
+ const EVENT_START_DATE_INPUT_FEILD = document.getElementById("start-date");
+ const EVENT_END_DATE_INPUT_FEILD = document.getElementById("end-date");
+ const EVENT_DAYS_CBOX = document.getElementById( "event-days-checkbox");
+ const MONDAY = document.getElementById( "monday");
  const EVENT_START_TIME_INPUT = document.getElementById("start-time");
- const EVENT_END_TIME_INPUT = document.getElementById("end-time");
- const ZOOM_LINK_INPUT = document.getElementById("link");
- const ZOOM_PASS_INPUT = document.getElementById("pass");
- const SUBMIT_BTN = document.getElementById("submit");
+ const EVENT_END_TIME_INPUT_FEILD = document.getElementById("end-time");
+ const ZOOM_LINK_INPUT_FEILD = document.getElementById("link");
+ const ZOOM_PASS_INPUT_FEILD = document.getElementById("pass");
+ const CREATE_EVENT_BTN = document.getElementById("submit");
 //---------------------------VIEW EVENTS------------------------------
  const EVENTS_PAGE = document.getElementById("events-page");
 
@@ -43,6 +45,7 @@ let indexOfEditingEvent = null;
 //------------------page load --------------------
 document.body.onload = function() {
   checkAndSetupProfile();
+ 
   //have not refactored local events
   updateLocalEvents();
 };
@@ -55,8 +58,10 @@ document.body.onload = function() {
 function checkAndSetupProfile(){
   chrome.storage.sync.get(['profile'], function(result) {
     let profile = result.profile;
+    
     //profile exists, go to mainMenu
-    if (profile.first){
+    if (profile){
+      console.log(profile);
       updateWelcome(profile);
       gotoMainMenu();
     }
@@ -71,9 +76,9 @@ function checkAndSetupProfile(){
 //-------------Update Local Profile Functions--------------
   //temporary
   function presetProfileInputs(){
-      FIRST_NAME_INPUT.value = "Nathan";
-      LAST_NAME_INPUT.value = "Watkins";
-      NICKNAME_INPUT.value = "Nate-dog";
+      FIRST_NAME_INPUT_FEILD.value = "Nathan";
+      LAST_NAME_INPUT_FEILD.value = "Watkins";
+      NICKNAME_INPUT_FEILD.value = "Nate-dog";
     }
 }//END UPDATE LOCAL PROFILE - REFACTORED
 
@@ -95,26 +100,31 @@ function updateWelcome(profile){
 // ------------- profile page listeners
 NICKNAME_CHECKBOX.addEventListener("click", function(){
   if(NICKNAME_CHECKBOX.checked){
-    NICKNAME_INPUT_CONTAINER.hidden = false; 
-    NICKNAME_INPUT.required = true;
+    NICKNAME_INPUT_FEILD_CONTAINER.hidden = false; 
+    NICKNAME_INPUT_FEILD.required = true;
   }
   else{
-    NICKNAME_INPUT_CONTAINER.hidden = true;
-    NICKNAME_INPUT.required = false;
+    NICKNAME_INPUT_FEILD_CONTAINER.hidden = true;
+    NICKNAME_INPUT_FEILD.required = false;
   }
 })
 
 EDIT_PROFILE_BTN.addEventListener("click",function(){
   chrome.storage.sync.get(['profile'], function(result) {
     profile = result.profile;
-    FIRST_NAME_INPUT.value = profile.first;
-    LAST_NAME_INPUT.value = profile.last;
-    NICKNAME_INPUT.value = profile.nick;
+    FIRST_NAME_INPUT_FEILD.value = profile.first;
+    LAST_NAME_INPUT_FEILD.value = profile.last;
+    NICKNAME_INPUT_FEILD.value = profile.nick;
+    //if nick picked - reveal it
     if(profile.nick){
-      NICKNAME_CHECKBOX.checked = true;  
+      NICKNAME_CHECKBOX.checked = true;
+      NICKNAME_INPUT_FEILD_CONTAINER.hidden = false; 
+      NICKNAME_INPUT_FEILD.required = true;  
     }
     else{
       NICKNAME_CHECKBOX.checked = false; 
+      NICKNAME_INPUT_FEILD_CONTAINER.hidden = true;
+      NICKNAME_INPUT_FEILD.required = false;
     }
   })
   
@@ -145,10 +155,10 @@ CREATE_PROFILE_BTN.addEventListener("click", function(){
 
       //------helper functions---
       function fill(p){
-        p.first = FIRST_NAME_INPUT.value;
-        p.last = LAST_NAME_INPUT.value;
+        p.first = FIRST_NAME_INPUT_FEILD.value;
+        p.last = LAST_NAME_INPUT_FEILD.value;
         if (NICKNAME_CHECKBOX.checked){
-          p.nick = NICKNAME_INPUT.value;
+          p.nick = NICKNAME_INPUT_FEILD.value;
         }
         else{
           p.nick = null;
@@ -173,24 +183,23 @@ function storeProfile(p){
 
 //^^^^^^^^^^^^^^^^^^^^^^^PROFILE REFACTORED^^^^^^^^^^^^^^^^^^^^^^^^^
 
-//-----------------Create event-------------------------
-CREATE_EVENT_BTN.addEventListener('click', function () {
-  if(SUBMIT_BTN.textContent = "Edit Event"){
-    SUBMIT_BTN.textContent = "Create Event";
+//-----------------new event-------------------------
+NEW_EVENT_BTN.addEventListener('click', function () {
+  if(CREATE_EVENT_BTN.textContent = "Edit Event"){
+    CREATE_EVENT_BTN.textContent = "Create Event";
   }
   gotoEventInputMenu();
-  //openInput();
-  SUBMIT_BTN.hidden = false;
-  //PRESET VALUES
+   //TEST - preset values - NOT IN FINAL
   let tempTime =  getCurrentTime();
   let tempDate = getCurrentDate();
-  EVENT_NAME_INPUT.value = "165";
-  EVENT_START_DATE_INPUT.value = tempDate;
-  EVENT_END_DATE_INPUT.value = tempDate;
+  EVENT_NAME_TEXT_FEILD.value = "165";
+  EVENT_START_DATE_INPUT_FEILD.value = tempDate;
+  EVENT_END_DATE_INPUT_FEILD.value = tempDate;
+  EVENT_DAYS_CBOX.childNodes.nodeName == "checkbox";
   EVENT_START_TIME_INPUT.value  = tempTime;
-  EVENT_END_TIME_INPUT.value  = tempTime;
-  ZOOM_LINK_INPUT.value = "https://cccconfer.zoom.us/j/98359639686";
-  ZOOM_PASS_INPUT.value = "5N#DA@";
+  EVENT_END_TIME_INPUT_FEILD.value  = tempTime;
+  ZOOM_LINK_INPUT_FEILD.value = "https://cccconfer.zoom.us/j/98359639686";
+  ZOOM_PASS_INPUT_FEILD.value = "5N#DA@";
 })
 
 // click "main" button
@@ -201,45 +210,73 @@ GO_TO_MAIN_BTN.addEventListener('click',function(){
   });
   
 
-  
-
 // click "submit" button
 //creates the event
 //----------------------------------------
-SUBMIT_BTN.addEventListener('click', function() {
-  let emptyEvent = {};
+CREATE_EVENT_BTN.addEventListener('click', function() {
+  let eventToFill = {};
   //if we're editing an event
   if(indexOfEditingEvent){
-    let eventToEdit = arrayOfEvents[indexOfEditingEvent];
-    console.log(eventToEdit);
-    fillObject(eventToEdit);
-    gotoMainMenu();
+    //!!!Need to populate event fields with values from the event
+    let eventToFill = arrayOfEvents[indexOfEditingEvent];
+    //???is this a copy or actaully arrayOfEvents element
+    fillObject(eventToFill);
     storeEvents();
+    gotoMainMenu();
   }
   //were making a new event
   else{
-    fillObject(emptyEvent);
-    gotoMainMenu();
-    arrayOfEvents.push(emptyEvent); 
-    storeEvents(); 
+    if(MeetingFilled() && ZoomFilled() && oneDayPicked()){
+      fillObject(eventToFill);
+      arrayOfEvents.push(eventToFill); 
+      storeEvents();
+      gotoMainMenu();
+    }
   }
+
+  //how do i make sure they input at least one day
   //input validation
-  function fillObject(tempEvent){
-    if(MeetingFilled() && ZoomFilled()){
+  function fillObject(e){
+    let days = [];
       //fill up the tempEvent
-      tempEvent.eventName = document.getElementById("event").value;
-      tempEvent.zoomLink = document.getElementById("link").value;
-      tempEvent.zoomPass = document.getElementById("pass").value;
-      tempEvent.startDate = document.getElementById("start-date").value;
-      tempEvent.endDate = document.getElementById("end-date").value;
-      tempEvent.startTime = document.getElementById("start-time").value;
-      tempEvent.endTime = document.getElementById("end-time").value;
-      tempEvent.uuid = Date.now();
-    }//validation
+      days = getDays(days);
+      e.eventName = document.getElementById("event").value;
+      e.zoomLink = document.getElementById("link").value;
+      e.zoomPass = document.getElementById("pass").value;
+      e.startDate = document.getElementById("start-date").value;
+      e.endDate = document.getElementById("end-date").value;
+      e.startTime = document.getElementById("start-time").value;
+      e.endTime = document.getElementById("end-time").value;
+      e.uuid = Date.now();
+      e.days = days;
+      function getDays(d){
+      for(let i =0; i<EVENT_DAYS_CBOX.childNodes.length;i++){
+        if(EVENT_DAYS_CBOX.childNodes[i].nodeName == "INPUT"){
+          if(EVENT_DAYS_CBOX.childNodes[i].checked==true){
+            d.push(EVENT_DAYS_CBOX.childNodes[i].value);
+          }
+        }
+      }
+      return d;
+    }
   }//end of fill Event
+
+  
+  function oneDayPicked(){
+    
+    for(let i =0; i<EVENT_DAYS_CBOX.childNodes.length;i++){
+      if(EVENT_DAYS_CBOX.childNodes[i].nodeName == "INPUT"){
+        if(EVENT_DAYS_CBOX.childNodes[i].checked==true){
+          MONDAY.required = false;
+          return true;
+        }
+      }
+    }
+    MONDAY.required = true;
+    return false;
+  }
+
 }); // end of sumbit
-
-
 
 
 
@@ -305,7 +342,7 @@ VIEW_EVENT_BTN.addEventListener('click',function(){
     EDIT_EVENT_BTN.textContent = "Edit";
     EVENT_NAME_PARA.appendChild(EDIT_EVENT_BTN);
     EDIT_EVENT_BTN.addEventListener('click', function() {
-      SUBMIT_BTN.textContent = "Edit Event";
+      CREATE_EVENT_BTN.textContent = "Edit Event";
       hideEvents();
       showInput();
       populateInputFeilds(curEvent);
@@ -404,13 +441,13 @@ function getCurrentTime(){
 }
 
 function populateInputFeilds(curEvent){
-  ZOOM_LINK_INPUT.value = curEvent.zoomLink;
-  ZOOM_PASS_INPUT.value = curEvent.zoomPass;
-  EVENT_NAME_INPUT.value = curEvent.eventName;
-  EVENT_START_DATE_INPUT.value = curEvent.startDate;
-  EVENT_END_DATE_INPUT.value = curEvent.endDate;
+  ZOOM_LINK_INPUT_FEILD.value = curEvent.zoomLink;
+  ZOOM_PASS_INPUT_FEILD.value = curEvent.zoomPass;
+  EVENT_NAME_TEXT_FEILD.value = curEvent.eventName;
+  EVENT_START_DATE_INPUT_FEILD.value = curEvent.startDate;
+  EVENT_END_DATE_INPUT_FEILD.value = curEvent.endDate;
   EVENT_START_TIME_INPUT.value = curEvent.startTime;
-  EVENT_END_TIME_INPUT.value = curEvent.endTime;
+  EVENT_END_TIME_INPUT_FEILD.value = curEvent.endTime;
 }
 
 
@@ -480,6 +517,7 @@ function showMain(){
 function showInput(){
   INPUT_EVENTS_PAGE.hidden = false;
   GO_TO_MAIN_BTN.hidden = false; 
+  CREATE_EVENT_BTN.hidden = false;
 }
 
 function hideInput(){
@@ -502,8 +540,6 @@ function hideEvents(){
 
 
 
-
-
 function updateViewOfCount(){
   let size = arrayOfEvents.length;
   COUNT_VIEW.textContent = "Event Count: " + size;
@@ -513,11 +549,11 @@ function updateViewOfCount(){
 function NameInputFilled(){
   console.log("nameFilled is Called");
   let infoValid;
-  if(FIRST_NAME_INPUT.value !="" && LAST_NAME_INPUT.value !=""){
+  if(FIRST_NAME_INPUT_FEILD.value !="" && LAST_NAME_INPUT_FEILD.value !=""){
     infoValid = true;
     if(NICKNAME_CHECKBOX.checked){
       //make sure nickname is entered
-      if(NICKNAME_INPUT.value !=""){
+      if(NICKNAME_INPUT_FEILD.value !=""){
         infoValid = true;
       }
       else{
@@ -536,7 +572,7 @@ function NameInputFilled(){
 
 function MeetingFilled(){
   let infoValid;
-  if(EVENT_NAME_INPUT.value !="" && EVENT_START_DATE_INPUT.value !="" && EVENT_END_DATE_INPUT.value !="" && EVENT_START_TIME_INPUT.value !="" && EVENT_END_TIME_INPUT.value !=""){
+  if(EVENT_NAME_TEXT_FEILD.value !="" && EVENT_START_DATE_INPUT_FEILD.value !="" && EVENT_END_DATE_INPUT_FEILD.value !="" && EVENT_START_TIME_INPUT.value !="" && EVENT_END_TIME_INPUT_FEILD.value !=""){
     infoValid = true;
   }
     else{
@@ -547,26 +583,28 @@ function MeetingFilled(){
 }
 function ZoomFilled(){
   let infoValid;
-  if(ZOOM_LINK_INPUT.value !="" && ZOOM_PASS_INPUT.value !="" && ZoomlinkLogic()){
+  if(ZOOM_LINK_INPUT_FEILD.value !="" && ZOOM_PASS_INPUT_FEILD.value !="" && ZoomlinkLogic()){
     infoValid = true;
   }
     else{
       infoValid = false;
     }
     return infoValid;
-}
+
 
 //logic for zoom link not large enough
-function ZoomlinkLogic(){
-  // console.log("PENISSSSSSSSSSSSS");
-  // let infoValid;
-  // if ((link.value.length < 50) && pass.value == ""){
-  //   alert("Link not long enough, enter a link with a password or enter a password")
-  //   infoValid = false;
-  // } 
-  // else{
-  //   infoValid = true;
-  // }
-  // return infoValid;
-  return true;
+  function ZoomlinkLogic(){
+    // console.log("PENISSSSSSSSSSSSS");
+    // let infoValid;
+    // if ((link.value.length < 50) && pass.value == ""){
+    //   alert("Link not long enough, enter a link with a password or enter a password")
+    //   infoValid = false;
+    // } 
+    // else{
+    //   infoValid = true;
+    // }
+    // return infoValid;
+    return true;
+  }
 }
+

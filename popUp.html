@@ -14,7 +14,7 @@
 
   <!----------------------Pages------------------------->
   <div hidden id="main-menu-page">
-    <button id = "create" >Create Event</button>
+    <button id = "new-event" >Create Event</button>
     <button id = "view">View Events</button>
     
   </div>
@@ -26,14 +26,18 @@
       <p>Enter Name:</p>
       <input id = "fname" type = "text" required placeholder="First">
       <input id = "lname" type = "text" required placeholder="Last"> 
+      
+      <label id = "nick-pref-label" for="prefer-nick">Prefer Nickname</label>
       <input id = "prefer-nick" type = "checkbox">
-      <label for="prefer-nick">  Nickname preferred</label>
-
+      <br>
+      <small><b>Nickname replaces name in call</b></small>
+      <br>
+    
       <div hidden id = "input-nick">
-        <p> Enter Nickname*</p>
+        <p id = "enter-nick">Enter Nickname:</p>
         <input id = "nick" type = "text" placeholder="Nickname">
-        <h5> *Nickname replaces name in call </h5>
-      </div>
+        </div>
+      <br>
       <button id = "create-profile">Create Profile</button>
   </form>
   </div> <!--end of input-name -->
@@ -52,6 +56,20 @@
       <br>
       <label for="end-date">End Date</label>
       <input id = "end-date" type = "date" required>
+      <!--days-->
+      <p>Days: <small><b>Pick at least 1 day</b></small></p>
+      <label id = "days-label" for="event-days-checkboxes">Week Days</label>
+      <div id="event-days-checkbox">
+        <input id = "monday" type="checkbox" value="1"> M
+        <input type="checkbox" value="2"> T
+        <input type="checkbox" value="3"> W
+        <input type="checkbox" value="4"> T
+        <input type="checkbox" value="5"> F
+        <label for="week-end"></label>Weekend</label>
+        <br>
+        <input id = "week-end" type="checkbox" value="6"> S
+        <input type="checkbox" value="0"> S
+      </div>
       <br>
       <label for="start-date">Start Time:</label>
       <input id = "start-time" type = "time" required>
@@ -63,8 +81,9 @@
       <input id = "link" type = "text" required placeholder="https://zoom...">
       <label for="pass">Pass</label>
       <input id = "pass" type = "text" required placeholder="Password">
-      <button id = "submit">Create Event</button>
+      <button id = "submit">Create Event</button> 
     </form>
+    
       <!--only when editing(submit is going to be hidden)-->
   </div>
 
