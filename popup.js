@@ -44,12 +44,10 @@ let indexOfEditingEvent = null;
 
 //------------------page load --------------------
 document.body.onload = function() {
-  checkAndSetupProfile();
+checkAndSetupProfile();
  
-  //have not refactored local events
-  updateLocalEvents();
-};
-
+//have not refactored local events
+updateLocalEvents();
 
 ///----REFACTORED
 //gets profile
@@ -58,7 +56,6 @@ document.body.onload = function() {
 function checkAndSetupProfile(){
   chrome.storage.sync.get(['profile'], function(result) {
     let profile = result.profile;
-    
     //profile exists, go to mainMenu
     if (profile){
       console.log(profile);
@@ -73,14 +70,14 @@ function checkAndSetupProfile(){
       presetProfileInputs();
     }
   })
-//-------------Update Local Profile Functions--------------
   //temporary
   function presetProfileInputs(){
       FIRST_NAME_INPUT_FEILD.value = "Nathan";
       LAST_NAME_INPUT_FEILD.value = "Watkins";
       NICKNAME_INPUT_FEILD.value = "Nate-dog";
     }
-}//END UPDATE LOCAL PROFILE - REFACTORED
+  }//END UPDATE LOCAL PROFILE - REFACTORED
+}//end of onload
 
 
 function updateWelcome(profile){
@@ -351,7 +348,7 @@ VIEW_EVENT_BTN.addEventListener('click',function(){
       console.log(indexOfEditingEvent);
     });
   
-  //creating elements f    
+  //creating elements    
   let EVENT_LINK_PARA = document.createElement("p");
   EVENT_LINK_PARA.textContent = "Zoom link: " + curEvent.zoomLink;
   NEW_EVENT.appendChild(EVENT_LINK_PARA);
@@ -373,6 +370,29 @@ VIEW_EVENT_BTN.addEventListener('click',function(){
   EVENT_START_TIME_PARA.textContent = "Start Time: " + curEvent.startTime;
   NEW_EVENT.appendChild(EVENT_START_TIME_PARA);
 
+  let DAYS_OF_WEEK_PARA = document.createElement("p");
+  DAYS_OF_WEEK_PARA.textContent = "Days: " + getDaysFromIndex();
+  NEW_EVENT.appendChild(DAYS_OF_WEEK_PARA);
+  
+  function getDaysFromIndex(){
+    arrayOfDays = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+    let stringOfDays = "";
+    let numOfDays = curEvent.days.length;
+    for(let i = 0; i < numOfDays; i++){
+      dayIndex = curEvent.days[i];
+      //on last day
+      if(i==numOfDays-1){
+        stringOfDays += " and " + arrayOfDays[dayIndex];
+      }
+      else{
+        stringOfDays += " " + arrayOfDays[dayIndex] + ",";
+      }
+ 
+      
+    }
+    return stringOfDays;
+  }
+  
   let EVENT_END_TIME_PARA = document.createElement("p");
   EVENT_END_TIME_PARA.textContent ="End Time: " + curEvent.endTime;
   NEW_EVENT.appendChild(EVENT_END_TIME_PARA);
@@ -465,14 +485,14 @@ function gotoMainMenu(){
 
 //going to Event Input
 function gotoEventInputMenu(){
-  showInput();
   hideMain();
   hideEvents();
+  showInput();
 }
 function gotoEventsMenu(){
-  showEvents();
   hideMain();
-  hideInput();
+  hideInput()
+  showEvents();
 }
 
 //going to ProfileInput
