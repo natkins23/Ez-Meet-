@@ -39,32 +39,49 @@
 
 
  //get rid of this object
-let arrayOfEvents = [];
 let indexOfEditingEvent = null;
 
 //------------------page load --------------------
 document.body.onload = function() {
-checkAndSetupProfile();
- 
-//have not refactored local events
-updateLocalEvents();
+setupProfile();
+setupEvents();
 
-///----REFACTORED
+//gets array
+//either exists or doesnt exist
+//if it exists, store it
+function setupEvents(){
+  chrome.storage.sync.get(['array'], function(result) {
+    let eventsArray = result.array;
+    //if array exists
+    if (eventsArray!==undefined){
+      console.log("events array alread existed");
+      //update event Count
+      COUNT_VIEW.textContent = "Event Count : " + eventsArray.length; 
+    }
+    else{
+      eventsArray = [];
+      storeEvents(eventsArray);
+      
+      
+    }
+  })
+}
+
 //gets profile
 //either exists and goes to main
 //or stores an empty profile object
-function checkAndSetupProfile(){
-  chrome.storage.sync.get(['profile'], function(result) {
+function setupProfile(){
+  defaultProfile = {};
+  chrome.storage.sync.get({profile:defaultProfile}, function(result) {
     let profile = result.profile;
     //profile exists, go to mainMenu
-    if (profile){
+    if (profile.first!==undefined){
       console.log(profile);
       updateWelcome(profile);
       gotoMainMenu();
     }
     //OR - profile DOESNT exists, and you make a temp profile
     else{
-      profile = {};
       storeProfile(profile);
       //TESTING - preseting profile inputs for purposes of testing
       presetProfileInputs();
@@ -80,13 +97,13 @@ function checkAndSetupProfile(){
 }//end of onload
 
 
-function updateWelcome(profile){
-  if(profile.nick){
-    WELCOME.textContent = "Welcome " + profile.nick + "!";
+function updateWelcome(p){
+  if(p.nick!==undefined && p.nick !=null){
+    WELCOME.textContent = "Welcome " + p.nick + "!";
     
   }
-  else if (profile.first){
-    WELCOME.textContent = "Welcome " + profile.first + "!";
+  else if (p.first!==undefined){
+    WELCOME.textContent = "Welcome " + p.first + "!";
   }
   else{
     console.log("ERROR THERE IS NO PROFILE! UPDATEWELCOME HAS NO PROFILE");
@@ -147,7 +164,7 @@ CREATE_PROFILE_BTN.addEventListener("click", function(){
       let profile = result.profile;
       fill(profile);
       storeProfile(profile);
-      updateWelcome();
+      updateWelcome(profile);
       gotoMainMenu();
 
       //------helper functions---
@@ -211,28 +228,26 @@ GO_TO_MAIN_BTN.addEventListener('click',function(){
 //creates the event
 //----------------------------------------
 CREATE_EVENT_BTN.addEventListener('click', function() {
-  let eventToFill = {};
+  chrome.storage.sync.get(['array'], function(result) {
+    let eventsArray = result.array;
   //if we're editing an event
-  if(indexOfEditingEvent){
-    //!!!Need to populate event fields with values from the event
-    let eventToFill = arrayOfEvents[indexOfEditingEvent];
-    //???is this a copy or actaully arrayOfEvents element
-    fillObject(eventToFill);
-    storeEvents();
-    gotoMainMenu();
-  }
-  //were making a new event
-  else{
-    if(MeetingFilled() && ZoomFilled() && oneDayPicked()){
-      fillObject(eventToFill);
-      arrayOfEvents.push(eventToFill); 
-      storeEvents();
+    if(indexOfEditingEvent){
+      eventsArray[indexOfEditingEvent] = fillObject(eventToFill);
+      storeEvents(eventsArray);
       gotoMainMenu();
     }
-  }
-
-  //how do i make sure they input at least one day
-  //input validation
+  //were making a new event
+    else{
+      let eventToFill = {};
+      if(MeetingFilled() && ZoomFilled() && oneDayPicked()){
+        fillObject(eventToFill);
+        eventsArray.push(eventToFill); 
+        storeEvents(eventsArray);
+        gotoMainMenu();
+      } 
+    }
+  })//Sync
+  
   function fillObject(e){
     let days = [];
       //fill up the tempEvent
@@ -246,21 +261,20 @@ CREATE_EVENT_BTN.addEventListener('click', function() {
       e.endTime = document.getElementById("end-time").value;
       e.uuid = Date.now();
       e.days = days;
+
       function getDays(d){
-      for(let i =0; i<EVENT_DAYS_CBOX.childNodes.length;i++){
-        if(EVENT_DAYS_CBOX.childNodes[i].nodeName == "INPUT"){
-          if(EVENT_DAYS_CBOX.childNodes[i].checked==true){
-            d.push(EVENT_DAYS_CBOX.childNodes[i].value);
+        for(let i =0; i<EVENT_DAYS_CBOX.childNodes.length;i++){
+          if(EVENT_DAYS_CBOX.childNodes[i].nodeName == "INPUT"){
+            if(EVENT_DAYS_CBOX.childNodes[i].checked==true){
+              d.push(EVENT_DAYS_CBOX.childNodes[i].value);
+            }
           }
         }
-      }
-      return d;
-    }
-  }//end of fill Event
+        return d;
+    }//getDays
+  }//Fill Object
 
-  
   function oneDayPicked(){
-    
     for(let i =0; i<EVENT_DAYS_CBOX.childNodes.length;i++){
       if(EVENT_DAYS_CBOX.childNodes[i].nodeName == "INPUT"){
         if(EVENT_DAYS_CBOX.childNodes[i].checked==true){
@@ -271,46 +285,49 @@ CREATE_EVENT_BTN.addEventListener('click', function() {
     }
     MONDAY.required = true;
     return false;
-  }
+  }//oneDayPicked
 
-}); // end of sumbit
+}); //--------END OF SUBMIT----------
 
 
 
 // click view listener - button - will actually be creating the DOM elements
 //----------------------------------------
 VIEW_EVENT_BTN.addEventListener('click',function(){
-  indexOfEditingEvent = null;
-  gotoEventsMenu();
-  //get number of events
-  let arrSize = arrayOfEvents.length;
-  let printedEvents = 0;
-  
-  //get number of dom events
-  let allChildElements = EVENTS_PAGE.children;
+  chrome.storage.sync.get(['array'], function(result) {
+    let eventsArray = result.array;
+    indexOfEditingEvent = null;
+    gotoEventsMenu();
+    //get number of events
+    let arrSize = eventsArray.length;
+    let printedEvents = 0;
 
-    //loop to get the number of elements in the dom
-  for(let i =0; i<allChildElements.length; i++){
-    if (allChildElements[i].nodeName == "DIV"){
-      printedEvents++;
+    //get number of dom events
+    let allChildElements = EVENTS_PAGE.children;
+
+      //loop to get the number of elements in the dom
+    for(let i =0; i<allChildElements.length; i++){
+      if (allChildElements[i].nodeName == "DIV"){
+        printedEvents++;
+      }
     }
-  }
- //if there are more events in array than in dom, create elements in DOM from the count of the elements Created in dom
-  if (arrSize>printedEvents){
-    for(let i = printedEvents; i<arrSize;i++){
-      //pass an index to the create event function, which makes the DOM event for the event object at that index of the arrayOfEvents array.
-      createEventElement(i);
+    //if there are more events in array than in dom, create elements in DOM from the count of the elements Created in dom
+    if (arrSize>printedEvents){
+      for(let i = printedEvents; i<arrSize;i++){
+        createEventElement(i,eventsArray);
+      }
     }
-  }
- 
+  })
+  
+  
  
   //must have elements when deleted, remove them selves from the array of events
 
   //not sure if necessary
   //updateLocalEvents(createEventElement);
 
-  function createEventElement(index){
-    let curEvent = arrayOfEvents[index];
+  function createEventElement(i, a){
+    let curEvent = a[i];
     console.log(curEvent);
     //new event container
     let NEW_EVENT = document.createElement("div");
@@ -327,11 +344,12 @@ VIEW_EVENT_BTN.addEventListener('click',function(){
     EVENT_NAME_PARA.appendChild(DELETE_EVENT_BTN);
     DELETE_EVENT_BTN.addEventListener('click', function(e) {
       //remove deleted event from array of events
-      arrayOfEvents.splice(index,1);
+      //splice updates the a event
+      a.splice(i,1);
       //remove the div
       EVENTS_PAGE.removeChild(NEW_EVENT);
       //update the store array
-      storeEvents();
+      storeEvents(a);
     })
 
     //edit Button
@@ -344,7 +362,7 @@ VIEW_EVENT_BTN.addEventListener('click',function(){
       showInput();
       populateInputFeilds(curEvent);
       console.log(indexOfEditingEvent);
-      indexOfEditingEvent = index;
+      indexOfEditingEvent = i;
       console.log(indexOfEditingEvent);
     });
   
@@ -400,31 +418,16 @@ VIEW_EVENT_BTN.addEventListener('click',function(){
  }//end of createEventElement function
 })//end of view.addEventListener
 
-function updateEventCountHTML(){
-  let eventCount = arrayOfEvents.length;
-  COUNT_VIEW.textContent = "Event Count : " + eventCount; 
-}  
+
 //-----------------Events Array------------------
- function storeEvents(){
-  chrome.storage.sync.set({array: arrayOfEvents}, function() {
-    console.log('Array stored:' + arrayOfEvents);
-    updateEventCountHTML(); 
+ function storeEvents(a){
+  chrome.storage.sync.set({array: a}, function() {
+    console.log('Array stored:' + a);
+    //updated the count we view on main page
+    COUNT_VIEW.textContent = "Event Count : " + a.length; 
   });
 
 }
-//will update the dom count as well as the array holding the event objects
- function updateLocalEvents(){
-    chrome.storage.sync.get(['array'], function(result) {
-      //if result key is undefined  
-      arrayOfEvents = result.array; 
-      if(!arrayOfEvents){
-          arrayOfEvents = [];
-        }
-      updateEventCountHTML();
-      console.log("Updated Local Array: ");
-      console.log(arrayOfEvents);
-    })
- }
 
 //click clear memory
 CLEAR.addEventListener('click', clearMemory);
@@ -558,12 +561,6 @@ function hideEvents(){
 
 //-------END HIDING------------------------------------------------
 
-
-
-function updateViewOfCount(){
-  let size = arrayOfEvents.length;
-  COUNT_VIEW.textContent = "Event Count: " + size;
-}
 
 //------------------Validation-------------------------------
 function NameInputFilled(){
