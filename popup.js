@@ -187,9 +187,25 @@ function storeProfile(p){
    });
 }//end store
 
+
+function resetCheckbox(){
+  console.log("penis");
+  for(let i  = 0; i<EVENT_DAYS_CBOX.children.length;i++){
+    if(EVENT_DAYS_CBOX.children[i].nodeName == "INPUT"){
+      EVENT_DAYS_CBOX.children[i].checked = false;
+    } 
+  }
+}
+
 //-----------------CREATE NEW EVENT-------------------------
 NEW_EVENT_BTN.addEventListener('click', function () {
   gotoEventInputMenu();
+  
+
+
+ 
+
+
    //TEST - preset values - NOT IN FINAL
   let tempTime =  getCurrentTime();
   let tempDate = getCurrentDate();
@@ -239,7 +255,7 @@ CREATE_EDITED_EVENT_BTN.addEventListener('click', function() {
             break;
           }
         }
-          theEvent[0].textContent = "Event : " + eventToEdit.eventName;
+          theEvent[2].textContent = "Event : " + eventToEdit.eventName;
           theEvent[3].textContent = "Start Time: " + eventToEdit.startTime;
           theEvent[4].textContent = "End Time: " + eventToEdit.endTime;
           theEvent[5].textContent = "Days: " + getDaysFromIndex(eventToEdit);
@@ -395,16 +411,12 @@ function createEventElement(id, a){
       }
     //remove deleted event from array of events
     //splice updates the a event
-    console.log('TEST');
-    console.log(index);
-    console.log(a);
-
     eventsArray.splice(index,1);
     //remove the div
     EVENTS_PAGE.removeChild(NEW_EVENT);
     //update the store array
     storeEvents(eventsArray);
-    })
+    })//sync
   })//Delete listener
 
   //edit button
@@ -579,7 +591,7 @@ function gotoEventInputMenu(){
 }
 function gotoEventsView(){
   hideMain();
-  hideInput()
+  hideInput();
   showEvents();
 }
 
@@ -629,6 +641,7 @@ function showInput(){
 }
 
 function hideInput(){
+  resetCheckbox();
   GO_TO_MAIN_BTN.hidden = true;
   INPUT_EVENTS_PAGE.hidden = true;
 }
