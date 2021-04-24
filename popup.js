@@ -239,40 +239,17 @@ CREATE_EDITED_EVENT_BTN.addEventListener('click', function() {
             break;
           }
         }
-        //loop through the elements of the event
-        for(let i = 0;i<theEvent.length;i++){
-              if(i==0){
-                theEvent[i].textContent = "eventsArray.eventName";
-              }
-              else if(i==1){
-                theEvent[i].textContent = eventsArray.startTime;
-              }
-              else if(i==2){
-                theEvent[i].textContent = eventsArray.endTime;
-              }
-              else if(i==3){
-                theEvent[i].textContent = eventsArray.days;
-              }
-              else if(i==4){
-                theEvent[i].textContent = eventsArray.startDate
-              }
-              else if(i==5){
-                theEvent[i].textContent = eventsArray.endDate
-              }
-              else if(i==6){
-                theEvent[i].textContent = eventsArray.zoomLink
-              }
-              else if(i==7){
-                theEvent[i].textContent = eventsArray.zoomPass
-              }
-              else{
-                console.log("bugggggg");
-              }
-              break;
-            }
-          }
-          gotoEventsView();
-        })//sync 
+          theEvent[0].textContent = "Event : " + eventToEdit.eventName;
+          theEvent[3].textContent = "Start Time: " + eventToEdit.startTime;
+          theEvent[4].textContent = "End Time: " + eventToEdit.endTime;
+          theEvent[5].textContent = "Days: " + getDaysFromIndex(eventToEdit);
+          theEvent[6].textContent = "Start Date: " + eventToEdit.startDate
+          theEvent[7].textContent ="End Date: " + eventToEdit.endDate
+          theEvent[8].textContent = "Zoom Link: " + eventToEdit.zoomLink
+          theEvent[9].textContent = "Zoom Pass: " + eventToEdit.zoomPass
+      }
+    gotoEventsView();
+  })//sync 
 
     function updateArray(a,e){
       let id = e.uuid;
@@ -403,13 +380,6 @@ function createEventElement(id, a){
   EVENTS_PAGE.appendChild(NEW_EVENT);
   NEW_EVENT.id = curEvent.uuid;
 
-  //Event Details
-  let EVENT_NAME_PARA = document.createElement("p");
-  EVENT_NAME_PARA.textContent = "Event : " + curEvent.eventName;
-  EVENT_NAME_PARA.id = "event-name";
-
-  NEW_EVENT.appendChild(EVENT_NAME_PARA);
-
   //delete button
   let DELETE_EVENT_BTN = document.createElement("button");
   DELETE_EVENT_BTN.textContent = "x";
@@ -451,6 +421,10 @@ function createEventElement(id, a){
   })// edit listener
 
 //creating elements   
+let EVENT_NAME_PARA = document.createElement("p");
+EVENT_NAME_PARA.textContent = "Event : " + curEvent.eventName;
+EVENT_NAME_PARA.id = "event-name";
+NEW_EVENT.appendChild(EVENT_NAME_PARA);
 
 let EVENT_START_TIME_PARA = document.createElement("p");
 EVENT_START_TIME_PARA.textContent = "Start Time: " + curEvent.startTime;
@@ -463,7 +437,7 @@ EVENT_END_TIME_PARA.id = "event-end-time";
 NEW_EVENT.appendChild(EVENT_END_TIME_PARA);
 
 let DAYS_OF_WEEK_PARA = document.createElement("p");
-DAYS_OF_WEEK_PARA.textContent = "Days: " + getDaysFromIndex();
+DAYS_OF_WEEK_PARA.textContent = "Days: " + getDaysFromIndex(curEvent);
 DAYS_OF_WEEK_PARA.id = "event-days";
 NEW_EVENT.appendChild(DAYS_OF_WEEK_PARA);
 
@@ -489,8 +463,12 @@ EVENT_PASS_PARA.textContent = "Zoom pass: " + curEvent.zoomPass;
 EVENT_PASS_PARA.id = "event-zoom-pass";
 NEW_EVENT.appendChild(EVENT_PASS_PARA);
 
-function getDaysFromIndex(){
-  arrayOfDays = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+}//end of createEventElement function
+
+
+
+function getDaysFromIndex(curEvent){
+  arrayOfDays = ["Saturday","Monday","Tuesday","Wednesday","Thursday","Friday","Sunday"];
   let stringOfDays = "";
   let numOfDays = curEvent.days.length;
   for(let i = 0; i < numOfDays; i++){
@@ -512,9 +490,6 @@ function getDaysFromIndex(){
 }
 
 
-
-
-}//end of createEventElement function
 
 //-----------------Events Array------------------
  function storeEvents(a){
@@ -568,7 +543,20 @@ function populateInputFeilds(curEvent){
   EVENT_END_DATE_INPUT_FEILD.value = curEvent.endDate;
   EVENT_START_TIME_INPUT.value = curEvent.startTime;
   EVENT_END_TIME_INPUT_FEILD.value = curEvent.endTime;
-}
+  //populate the checkmarks
+  for(let i =0; i<curEvent.days.length;i++){
+      for(let j =0; j<EVENT_DAYS_CBOX.children.length;j++){
+        if (EVENT_DAYS_CBOX.children[j].nodeName == "INPUT"){
+        //to see if a child matches a day
+        if(EVENT_DAYS_CBOX.children[j].value == curEvent.days[i]){
+          EVENT_DAYS_CBOX.children[j].checked = true;
+        }
+      }
+    }
+  
+  }//end for
+
+}//end populate
 
 
 
