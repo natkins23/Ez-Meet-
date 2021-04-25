@@ -1,21 +1,22 @@
 <!DOCTYPE html>
 <html>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+  <link rel="stylesheet" href="popUp.css">
 <body>
   
   <!---------------------All Pages----------------------->
-  <button id = "back-to-main" hidden >Main Menu</button>
+  <div id = line-one ><div id = "welcome" >Welcome</div> <span id = "edit-profile" hidden class="material-icons">settings</span></div>
+  <div id = "event-count-view" hidden >Event Count: </div>
+  
+  <button class = button id = "back-to-main" hidden >Main Menu</button>
   <button id ="clear-memory">Clear</button>
-  <button id = "edit-profile" hidden>Edit Profile</button>
-
-  <p id = "welcome" >Welcome</p>
-  <p id = "event-count-view" hidden >Event Count: </p>
-
 
 
   <!----------------------Pages------------------------->
   <div hidden id="main-menu-page">
-    <button id = "new-event" >Add Event</button>
-    <button id = "view">View Events</button>
+    <button class = button id = "new-event" >Add Event</button>
+    <button class = button id = "view">View Events</button>
     
   </div>
   
@@ -86,13 +87,13 @@
       
     </form>
     <button hidden id = "edit-submit">Edit Event</button> 
-    <button id = "new-submit">Create Event</button> 
+    <button  id = "new-submit">Create Event</button> 
     
       <!--only when editing(submit is going to be hidden)-->
   </div>
 
   
-  <div hidden id = "events-page"></div>
+  <div class="flex-container" hidden id = "events-page"></div>
 
 
 

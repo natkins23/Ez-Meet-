@@ -1,0 +1,73 @@
+body {
+    background-color: white;
+  }
+
+
+#welcome {
+    margin: 0px;
+    padding: 0px; 
+    height: 20px;
+    width: 100px;
+    float: left;
+}
+#event-count-view {
+    margin: 0px;
+    padding: 0px; 
+    height: 20px;
+    width: 100px;
+    float: left;
+}
+#line-one{
+    margin: 10px 
+}
+#edit-profile{
+    cursor: pointer;
+    color: grey;
+    margin: 3px;
+    padding: 3px;
+    float: right;
+}
+
+.flex-container {
+    display: flex;
+    flex-direction: column;
+    background-color: DodgerBlue;
+  }
+  
+  .flex-container > div {
+    background-color: #f1f1f1;
+    margin: 5px;
+    padding: 10px;
+    font-size: 15px;
+  }
+.button {
+    font-weight:600;
+    background-color: #1a6ed4; /* Zoom Blue */
+    border: 1px solid green;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 13px;
+    cursor: pointer;
+    float: left;
+    width: 200px;
+    border-radius: 2px;
+    margin: 5px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;    
+  }
+
+ .button:hover {
+    background-color: #165eb6;
+  }
+
+  input[type=text], select, textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: vertical;
+  }
