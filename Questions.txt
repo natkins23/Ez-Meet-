@@ -1,5 +1,5 @@
- Globals:
- Do i need to have a gloabl profile???
-\Thoughts: It seems i would have no way to fill a profile object when I would want to 
-LIES - got rid of that shit
 
+// "16": "/ez/get_started16.png",
+// "32": "/images/get_started32.png",
+// "48": "/images/get_started48.png",
+// "128": "/images/get_started128.png"
