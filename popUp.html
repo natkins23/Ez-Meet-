@@ -1,21 +1,25 @@
 <!DOCTYPE html>
 <html>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round"
+      rel="stylesheet">
+  <link rel="stylesheet" href="popUp.css">
 <body>
   
   <!---------------------All Pages----------------------->
-  <button id = "back-to-main" hidden >Main Menu</button>
-  <button id ="clear-memory">Clear</button>
-  <button id = "edit-profile" hidden>Edit Profile</button>
-
-  <p id = "welcome" >Welcome</p>
-  <p id = "event-count-view" hidden >Event Count: </p>
-
-
+  <span id = "back-to-main" class="material-icons-round icon" title="Home">&#xe88a;</span>
+  <span id = "page-title">Home</span>
+  <span id = "edit-profile" class="material-icons-round icon" title="Settings">&#xe8b8;</span>
+  <div id = "welcome" >Welcome</div>
+ 
+  <div id = "event-count-view" hidden >Event Count: </div>
+  
+  
+ 
 
   <!----------------------Pages------------------------->
   <div hidden id="main-menu-page">
-    <button id = "new-event" >Add Event</button>
-    <button id = "view">View Events</button>
+    <button class = "blue-button button"  id = "new-event" >Add Event</button>
+    <button class = "blue-button button" id = "view">View Events</button>
     
   </div>
   
@@ -38,9 +42,10 @@
         <input id = "nick" type = "text" placeholder="Nickname">
         </div>
       <br>
-      
+      <button id = "create-profile">Create Profile</button>
+      <button id ="clear-memory">Delete Profile</button>
   </form>
-  <button id = "create-profile">Create Profile</button>
+
   </div> <!--end of input-name -->
 
 
@@ -61,7 +66,7 @@
       <p>Days: <small><b>Pick at least 1 day</b></small></p>
       <label id = "days-label" for="event-days-checkboxes">Week Days</label>
       <div id="event-days-checkbox">
-        <input id = "monday" type="checkbox" value="1"> M
+        <input required id = "monday" type="checkbox" value="1"> M
         <input type="checkbox" value="2"> T
         <input type="checkbox" value="3"> W
         <input type="checkbox" value="4"> T
@@ -82,14 +87,16 @@
       <input id = "link" type = "text" required placeholder="https://zoom...">
       <label for="pass">Pass</label>
       <input id = "pass" type = "text" required placeholder="Password">
-      <button id = "submit">Create Event</button> 
+      <button hidden class ="blue-button button"id = "edit-submit">Edit Event</button> 
+      <button class = "blue-button button" id = "new-submit">Create Event</button> 
     </form>
+  
     
       <!--only when editing(submit is going to be hidden)-->
   </div>
 
   
-  <div hidden id = "events-page"></div>
+  <div class="flex-container" hidden id = "events-page"></div>
 
 
 

@@ -1,0 +1,120 @@
+body {
+  width: 230px;
+  background-color: white;
+  }
+
+
+#welcome {
+    margin: 0px;
+    padding: 3px; 
+    height: 20px;
+    width: 200px;
+
+}
+#event-count-view {
+    margin: 0px;
+    padding: 0px; 
+}
+#line-one{
+    margin: 10px 
+}
+#edit-profile{
+  cursor: pointer;
+  color: #1a6ed4;
+  margin: 3px;
+  padding: 3px;
+  float: right;
+}
+
+#back-to-main{
+  cursor: pointer;
+  color: #1a6ed4;
+  justify-content: left;
+  margin: 3px;
+  padding: 3px;
+  float: left;
+}
+
+
+#create-profile{
+  font-weight:600;
+  background-color: #1a6ed4; 
+  color: white;
+  padding: 5px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 12px;
+  cursor: pointer;
+  float: left;
+  width: 100px;
+  border-radius: 2px;
+  margin: 5px;
+  justify-content: right;
+  align-items: center;
+}
+
+#clear-memory{
+  font-weight:600;
+  background-color: #be362c;
+  color: white;
+  padding: 5px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 12px;
+  cursor: pointer;
+  float: left;
+  width: 100px;
+  border-radius: 2px;
+  margin: 5px;
+  justify-content: right;
+  align-items: center; 
+}
+
+#page-title{
+  width: 500px;
+  margin: 0px 0px 0px 65px;
+  text-align: center;
+}
+
+.flex-container {
+    flex-direction: column;
+    background-color: DodgerBlue;
+  }
+  
+  .flex-container > div {
+    background-color: #f1f1f1;
+    margin: 5px;
+    padding: 5px;
+    font-size: px;
+  }
+.button {
+    font-weight:600;
+    background-color: #1a6ed4; /* Zoom Blue */
+    border: 2px solid rgb(7, 71, 7);
+    color: white;
+    padding: 10px 10px;
+    font-size: 13px;
+    cursor: pointer;
+    width: 200px;
+    border-radius: 3px;
+    margin: 5px 5px 5px 15px;
+  }
+
+ .blue-button:hover {
+    background-color: #165eb6;
+  }
+
+  .icon:hover {
+    background-color: #c9d2dd;
+    border-radius: 100px;
+  }
+
+
+  input[type=text], select, textarea {
+    width: 200px;
+    padding: 5px;
+    margin: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: vertical;
+  }

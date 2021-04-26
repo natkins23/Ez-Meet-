@@ -1,45 +1,43 @@
 //                   DOM elements (order of HTML)
 //ON ALL PAGES
 //button
- const GO_TO_MAIN_BTN = document.getElementById("back-to-main");
- const CLEAR = document.getElementById("clear-memory");
+const GO_TO_MAIN_BTN = document.getElementById("back-to-main");
+const CLEAR = document.getElementById("clear-memory");
 // paras
- const WELCOME = document.getElementById("welcome");
- const COUNT_VIEW = document.getElementById("event-count-view");
+const WELCOME = document.getElementById("welcome");
+const COUNT_VIEW = document.getElementById("event-count-view");
 //UNIQUE PAGES
 //----------------------------MAIN----------------------------------
- const MAIN_PAGE= document.getElementById("main-menu-page");
- const NEW_EVENT_BTN = document.getElementById("new-event");
- const VIEW_EVENT_BTN = document.getElementById("view");
- const EDIT_PROFILE_BTN = document.getElementById("edit-profile");
+const MAIN_PAGE= document.getElementById("main-menu-page");
+const NEW_EVENT_BTN = document.getElementById("new-event");
+const VIEW_EVENT_BTN = document.getElementById("view");
+const EDIT_PROFILE_BTN = document.getElementById("edit-profile");
 //------------------------CREATE PROFILE----------------------------------
- const INPUT_PROFILE_PAGE = document.getElementById("input-profile-page");
- const PROFILE_INPUT_MSG = document.getElementById("profile-input-message");
- const FIRST_NAME_INPUT_FEILD = document.getElementById("fname");
- const LAST_NAME_INPUT_FEILD = document.getElementById("lname");
- const NICKNAME_CHECKBOX = document.getElementById("prefer-nick");
- const NICKNAME_INPUT_FEILD_CONTAINER = document.getElementById("input-nick");
- const NICKNAME_INPUT_FEILD = document.getElementById("nick");
- const CREATE_PROFILE_BTN = document.getElementById("create-profile");
+const INPUT_PROFILE_PAGE = document.getElementById("input-profile-page");
+const PROFILE_INPUT_MSG = document.getElementById("profile-input-message");
+const FIRST_NAME_INPUT_FEILD = document.getElementById("fname");
+const LAST_NAME_INPUT_FEILD = document.getElementById("lname");
+const NICKNAME_CHECKBOX = document.getElementById("prefer-nick");
+const NICKNAME_INPUT_FEILD_CONTAINER = document.getElementById("input-nick");
+const NICKNAME_INPUT_FEILD = document.getElementById("nick");
+const CREATE_PROFILE_BTN = document.getElementById("create-profile");
 //-----------------------------INPUT------------------------------------
- const INPUT_EVENTS_PAGE = document.getElementById("input-event-page");
- const INPUT_HEADER = document.getElementById("input-header");
- const EVENT_NAME_TEXT_FEILD = document.getElementById("event");
- const EVENT_START_DATE_INPUT_FEILD = document.getElementById("start-date");
- const EVENT_END_DATE_INPUT_FEILD = document.getElementById("end-date");
- const EVENT_DAYS_CBOX = document.getElementById( "event-days-checkbox");
- const MONDAY = document.getElementById( "monday");
- const EVENT_START_TIME_INPUT = document.getElementById("start-time");
- const EVENT_END_TIME_INPUT_FEILD = document.getElementById("end-time");
- const ZOOM_LINK_INPUT_FEILD = document.getElementById("link");
- const ZOOM_PASS_INPUT_FEILD = document.getElementById("pass");
- const CREATE_EVENT_BTN = document.getElementById("submit");
+const INPUT_EVENTS_PAGE = document.getElementById("input-event-page");
+const INPUT_HEADER = document.getElementById("input-header");
+const EVENT_NAME_TEXT_FEILD = document.getElementById("event");
+const EVENT_START_DATE_INPUT_FEILD = document.getElementById("start-date");
+const EVENT_END_DATE_INPUT_FEILD = document.getElementById("end-date");
+const EVENT_DAYS_CBOX = document.getElementById( "event-days-checkbox");
+const MONDAY = document.getElementById( "monday");
+const EVENT_START_TIME_INPUT = document.getElementById("start-time");
+const EVENT_END_TIME_INPUT_FEILD = document.getElementById("end-time");
+const ZOOM_LINK_INPUT_FEILD = document.getElementById("link");
+const ZOOM_PASS_INPUT_FEILD = document.getElementById("pass");
+const CREATE_NEW_EVENT_BTN = document.getElementById("new-submit");
+const CREATE_EDITED_EVENT_BTN = document.getElementById("edit-submit");
 //---------------------------VIEW EVENTS------------------------------
- const EVENTS_PAGE = document.getElementById("events-page");
-
-
- //get rid of this object
-let indexOfEditingEvent = null;
+const EVENTS_PAGE = document.getElementById("events-page");
+let theEvent;
 
 //------------------page load --------------------
 document.body.onload = function() {
@@ -54,7 +52,8 @@ function setupEvents(){
     let eventsArray = result.array;
     //if array exists
     if (eventsArray!==undefined){
-      console.log("events array alread existed");
+      console.log("Array existed"); 
+      console.log(eventsArray);
       //update event Count
       COUNT_VIEW.textContent = "Event Count : " + eventsArray.length; 
     }
@@ -83,17 +82,18 @@ function setupProfile(){
     //OR - profile DOESNT exists, and you make a temp profile
     else{
       storeProfile(profile);
-      //TESTING - preseting profile inputs for purposes of testing
+      //TEST/TEMP 
       presetProfileInputs();
     }
   })
-  //temporary
+  //TEST/TEMP - preseting profile inputs for purposes of testing
   function presetProfileInputs(){
       FIRST_NAME_INPUT_FEILD.value = "Nathan";
       LAST_NAME_INPUT_FEILD.value = "Watkins";
       NICKNAME_INPUT_FEILD.value = "Nate-dog";
     }
-  }//END UPDATE LOCAL PROFILE - REFACTORED
+  }//END setupProfile
+
 }//end of onload
 
 
@@ -148,15 +148,11 @@ EDIT_PROFILE_BTN.addEventListener("click",function(){
   PROFILE_INPUT_MSG.textContent = "Editing your profile";
   CREATE_PROFILE_BTN.textContent = "Edit Profile";
   //open the profile edit menu
-  gotoProfileInput();
-})
+  gotoSettings();
+})//END EDIT PROFILE BTN
+ 
 
-//---REFACTORING --  Create Profile --- 
-
-//GETS PROFILE FROM STROAGE
-//FILLS the pulled profile WITH THE (valid) input
-//STORES the profile
-//UPDATES WELCOME
+//--------Creates a profile if it doesnt
 CREATE_PROFILE_BTN.addEventListener("click", function(){ 
   //GETS PROFILE FROM STROAGE
   if(NameInputFilled()){
@@ -183,26 +179,33 @@ CREATE_PROFILE_BTN.addEventListener("click", function(){
 
   }//Name input validation
 
-})//end Listener
+})//end CREATE PROFILE Listener
 
 
-
-
-//might need to change p to profile
-//takes a profile - always called in another function
 function storeProfile(p){
   chrome.storage.sync.set({profile: p}, function() {
    });
+}//end store
+
+
+function resetCheckbox(){
+  console.log("penis");
+  for(let i  = 0; i<EVENT_DAYS_CBOX.children.length;i++){
+    if(EVENT_DAYS_CBOX.children[i].nodeName == "INPUT"){
+      EVENT_DAYS_CBOX.children[i].checked = false;
+    } 
+  }
 }
 
-//^^^^^^^^^^^^^^^^^^^^^^^PROFILE REFACTORED^^^^^^^^^^^^^^^^^^^^^^^^^
-
-//-----------------new event-------------------------
+//-----------------CREATE NEW EVENT-------------------------
 NEW_EVENT_BTN.addEventListener('click', function () {
-  if(CREATE_EVENT_BTN.textContent = "Edit Event"){
-    CREATE_EVENT_BTN.textContent = "Create Event";
-  }
   gotoEventInputMenu();
+  
+
+
+ 
+
+
    //TEST - preset values - NOT IN FINAL
   let tempTime =  getCurrentTime();
   let tempDate = getCurrentDate();
@@ -223,200 +226,281 @@ GO_TO_MAIN_BTN.addEventListener('click',function(){
   GO_TO_MAIN_BTN.hidden = true;
   });
   
+//potential issue - adding sendtoedit property. but if the eiditing process gets canceled multiple event objects could have that property and so Check for edits wouldnt just pick the last instance if it happens multiple times.
 
-// click "submit" button
-//creates the event
-//----------------------------------------
-CREATE_EVENT_BTN.addEventListener('click', function() {
-  chrome.storage.sync.get(['array'], function(result) {
+
+//I NEED TO CREATE THE EVENT IN THE VIEW BUTTON OR THEY WONT SHOW UP WHEN THE PAGE RELOADS!!!!!!
+
+///--edit event helpers
+CREATE_EDITED_EVENT_BTN.addEventListener('click', function() {
+  chrome.storage.sync.get(['edit','array'], function(result) {
     let eventsArray = result.array;
-  //if we're editing an event
-    if(indexOfEditingEvent){
-      eventsArray[indexOfEditingEvent] = fillObject(eventToFill);
+    let eventToEdit = result.edit;
+    if(MeetingFilled() && ZoomFilled() && oneDayPicked()){
+      fillObject(eventToEdit);
+      updateArray(eventsArray,eventToEdit)
       storeEvents(eventsArray);
-      gotoMainMenu();
-    }
-  //were making a new event
-    else{
-      let eventToFill = {};
-      if(MeetingFilled() && ZoomFilled() && oneDayPicked()){
-        fillObject(eventToFill);
-        eventsArray.push(eventToFill); 
-        storeEvents(eventsArray);
-        gotoMainMenu();
-      } 
-    }
-  })//Sync
-  
-  function fillObject(e){
-    let days = [];
-      //fill up the tempEvent
-      days = getDays(days);
-      e.eventName = document.getElementById("event").value;
-      e.zoomLink = document.getElementById("link").value;
-      e.zoomPass = document.getElementById("pass").value;
-      e.startDate = document.getElementById("start-date").value;
-      e.endDate = document.getElementById("end-date").value;
-      e.startTime = document.getElementById("start-time").value;
-      e.endTime = document.getElementById("end-time").value;
-      e.uuid = Date.now();
-      e.days = days;
-
-      function getDays(d){
-        for(let i =0; i<EVENT_DAYS_CBOX.childNodes.length;i++){
-          if(EVENT_DAYS_CBOX.childNodes[i].nodeName == "INPUT"){
-            if(EVENT_DAYS_CBOX.childNodes[i].checked==true){
-              d.push(EVENT_DAYS_CBOX.childNodes[i].value);
-            }
+        let tempId = eventToEdit.uuid;
+        console.log(eventToEdit);
+        console.log("the EDITING EVENT ID" + eventToEdit.uuid);
+        //find the right event
+        console.log(EVENTS_PAGE.children.length);
+        for(let i = 0; i<EVENTS_PAGE.children.length;i++){
+          let eventDiv = EVENTS_PAGE.children[i];
+          console.log("div" + eventDiv);
+          console.log("div id" + eventDiv.id);
+          if (eventDiv.id == tempId){
+            theEvent = eventDiv.children;
+           
+            break;
           }
         }
-        return d;
-    }//getDays
-  }//Fill Object
+          theEvent[2].textContent = "Event : " + eventToEdit.eventName;
+          theEvent[3].textContent = "Start Time: " + eventToEdit.startTime;
+          theEvent[4].textContent = "End Time: " + eventToEdit.endTime;
+          theEvent[5].textContent = "Days: " + getDaysFromIndex(eventToEdit);
+          theEvent[6].textContent = "Start Date: " + eventToEdit.startDate
+          theEvent[7].textContent ="End Date: " + eventToEdit.endDate
+          theEvent[8].textContent = "Zoom Link: " + eventToEdit.zoomLink
+          theEvent[9].textContent = "Zoom Pass: " + eventToEdit.zoomPass
+      }
+    gotoEventsView();
+  })//sync 
 
-  function oneDayPicked(){
-    for(let i =0; i<EVENT_DAYS_CBOX.childNodes.length;i++){
-      if(EVENT_DAYS_CBOX.childNodes[i].nodeName == "INPUT"){
-        if(EVENT_DAYS_CBOX.childNodes[i].checked==true){
-          MONDAY.required = false;
-          return true;
+    function updateArray(a,e){
+      let id = e.uuid;
+       //find index of event in array through uuid.
+      for(let i = 0; i<a.length;i++){
+        //if the id matches
+        if(a[i].uuid == id){
+          //replace that element with the event argument
+          a[i] = e;
         }
       }
     }
-    MONDAY.required = true;
-    return false;
-  }//oneDayPicked
+  })//create edit end
 
-}); //--------END OF SUBMIT----------
+//-- reusable - for new-submit and edit-submit
+function fillObject(e){
+  let days = [];
+    //fill up the tempEvent
+    days = getDays(days);
+    e.eventName = document.getElementById("event").value;
+    e.zoomLink = document.getElementById("link").value;
+    e.zoomPass = document.getElementById("pass").value;
+    e.startDate = document.getElementById("start-date").value;
+    e.endDate = document.getElementById("end-date").value;
+    e.startTime = document.getElementById("start-time").value;
+    e.endTime = document.getElementById("end-time").value;
+    if(!e.hasOwnProperty('uuid')){
+      e.uuid = Date.now();
+    }
+    e.days = days;
+
+    //only used when filling an object
+    function getDays(d){
+      for(let i =0; i<EVENT_DAYS_CBOX.childNodes.length;i++){
+        if(EVENT_DAYS_CBOX.childNodes[i].nodeName == "INPUT"){
+          if(EVENT_DAYS_CBOX.childNodes[i].checked==true){
+            d.push(EVENT_DAYS_CBOX.childNodes[i].value);
+          }
+        }
+      }
+      return d;
+  }//getDays
+  return e
+}//Fill Object
+
+function oneDayPicked(){
+  for(let i =0; i<EVENT_DAYS_CBOX.childNodes.length;i++){
+    if(EVENT_DAYS_CBOX.childNodes[i].nodeName == "INPUT"){
+      if(EVENT_DAYS_CBOX.childNodes[i].checked==true){
+        MONDAY.required = false;
+        return true;
+      }
+    }
+  }
+ 
+  return false;
+}//oneDayPicked
 
 
 
-// click view listener - button - will actually be creating the DOM elements
-//----------------------------------------
-VIEW_EVENT_BTN.addEventListener('click',function(){
+
+
+//------------CREATE NEW EVENT------------
+//creates new elements
+CREATE_NEW_EVENT_BTN.addEventListener('click', function() {
   chrome.storage.sync.get(['array'], function(result) {
     let eventsArray = result.array;
-    indexOfEditingEvent = null;
-    gotoEventsMenu();
+    let eventToFill = {};
+    if(MeetingFilled() && ZoomFilled() && oneDayPicked()){
+      console.log("passed oneDayPicked");
+      let filledEvent = fillObject(eventToFill);
+      eventsArray.push(filledEvent); 
+      storeEvents(eventsArray);
+      createEventElement(filledEvent.uuid,eventsArray);
+      gotoMainMenu();
+      
+    } 
+  })//Sync
+}); //--------END OF CREATE NEW EVENT----------
+
+
+
+
+//-------VIEW EVENTS------------------
+//creates elements in dom
+VIEW_EVENT_BTN.addEventListener('click',function(){
+  gotoEventsView();
+  chrome.storage.sync.get(['array'], function(result) {
+    let eventsArray = result.array;
     //get number of events
-    let arrSize = eventsArray.length;
+    let numOfEvents = eventsArray.length;
     let printedEvents = 0;
 
     //get number of dom events
     let allChildElements = EVENTS_PAGE.children;
 
-      //loop to get the number of elements in the dom
+    //loop to get the number of Events Created
     for(let i =0; i<allChildElements.length; i++){
       if (allChildElements[i].nodeName == "DIV"){
         printedEvents++;
       }
     }
     //if there are more events in array than in dom, create elements in DOM from the count of the elements Created in dom
-    if (arrSize>printedEvents){
-      for(let i = printedEvents; i<arrSize;i++){
-        createEventElement(i,eventsArray);
+    if (numOfEvents>printedEvents){
+      for(let i = printedEvents; i<numOfEvents;i++){
+        createEventElement(eventsArray[i].uuid,eventsArray);
       }
     }
-  })
-  
-  
- 
-  //must have elements when deleted, remove them selves from the array of events
+  })//end sync
+})//----------- END VIEW EVENTS LISTENER
 
-  //not sure if necessary
-  //updateLocalEvents(createEventElement);
-
-  function createEventElement(i, a){
-    let curEvent = a[i];
-    console.log(curEvent);
-    //new event container
-    let NEW_EVENT = document.createElement("div");
-    EVENTS_PAGE.appendChild(NEW_EVENT);
-
-    //Event Details
-    let EVENT_NAME_PARA = document.createElement("p");
-    EVENT_NAME_PARA.textContent = "Event : " + curEvent.eventName;
-    NEW_EVENT.appendChild(EVENT_NAME_PARA);
-
-    //delete Button
-    let DELETE_EVENT_BTN = document.createElement("button");
-    DELETE_EVENT_BTN.textContent = "x";
-    EVENT_NAME_PARA.appendChild(DELETE_EVENT_BTN);
-    DELETE_EVENT_BTN.addEventListener('click', function(e) {
-      //remove deleted event from array of events
-      //splice updates the a event
-      a.splice(i,1);
-      //remove the div
-      EVENTS_PAGE.removeChild(NEW_EVENT);
-      //update the store array
-      storeEvents(a);
-    })
-
-    //edit Button
-    let EDIT_EVENT_BTN = document.createElement("button");
-    EDIT_EVENT_BTN.textContent = "Edit";
-    EVENT_NAME_PARA.appendChild(EDIT_EVENT_BTN);
-    EDIT_EVENT_BTN.addEventListener('click', function() {
-      CREATE_EVENT_BTN.textContent = "Edit Event";
-      hideEvents();
-      showInput();
-      populateInputFeilds(curEvent);
-      console.log(indexOfEditingEvent);
-      indexOfEditingEvent = i;
-      console.log(indexOfEditingEvent);
-    });
-  
-  //creating elements    
-  let EVENT_LINK_PARA = document.createElement("p");
-  EVENT_LINK_PARA.textContent = "Zoom link: " + curEvent.zoomLink;
-  NEW_EVENT.appendChild(EVENT_LINK_PARA);
-  
-  let EVENT_PASS_PARA = document.createElement("p");
-  EVENT_PASS_PARA.textContent = "Zoom pass: " + curEvent.zoomPass;
-  NEW_EVENT.appendChild(EVENT_PASS_PARA);
-
-
-  let EVENT_START_DATE_PARA = document.createElement("p");
-  EVENT_START_DATE_PARA.textContent = "Start Date: " + curEvent.startDate;
-  NEW_EVENT.appendChild(EVENT_START_DATE_PARA);
-
-  let EVENT_END_DATE_PARA = document.createElement("p");
-  EVENT_END_DATE_PARA.textContent = "End Date: " + curEvent.endDate;
-  NEW_EVENT.appendChild(EVENT_END_DATE_PARA);
-
-  let EVENT_START_TIME_PARA = document.createElement("p");
-  EVENT_START_TIME_PARA.textContent = "Start Time: " + curEvent.startTime;
-  NEW_EVENT.appendChild(EVENT_START_TIME_PARA);
-
-  let DAYS_OF_WEEK_PARA = document.createElement("p");
-  DAYS_OF_WEEK_PARA.textContent = "Days: " + getDaysFromIndex();
-  NEW_EVENT.appendChild(DAYS_OF_WEEK_PARA);
-  
-  function getDaysFromIndex(){
-    arrayOfDays = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
-    let stringOfDays = "";
-    let numOfDays = curEvent.days.length;
-    for(let i = 0; i < numOfDays; i++){
-      dayIndex = curEvent.days[i];
-      //on last day
-      if(i==numOfDays-1){
-        stringOfDays += " and " + arrayOfDays[dayIndex];
-      }
-      else{
-        stringOfDays += " " + arrayOfDays[dayIndex] + ",";
-      }
- 
-      
+//i is index of the array to create
+//a is the array
+function createEventElement(id, a){
+  //get the event we want to create
+  let curEvent;
+  let index;
+  for(let i=0; i<a.length;i++){
+    if (a[i].uuid == id){
+      curEvent = a[i];
+      index = i;
+      break;
     }
-    return stringOfDays;
   }
-  
-  let EVENT_END_TIME_PARA = document.createElement("p");
-  EVENT_END_TIME_PARA.textContent ="End Time: " + curEvent.endTime;
-  NEW_EVENT.appendChild(EVENT_END_TIME_PARA);
+  console.log(curEvent);
+  //new event container
+  let NEW_EVENT = document.createElement("div");
+  EVENTS_PAGE.appendChild(NEW_EVENT);
+  NEW_EVENT.id = curEvent.uuid;
 
- }//end of createEventElement function
-})//end of view.addEventListener
+  //delete button
+  let DELETE_EVENT_BTN = document.createElement("button");
+  DELETE_EVENT_BTN.textContent = "x";
+  NEW_EVENT.appendChild(DELETE_EVENT_BTN);
+  DELETE_EVENT_BTN.addEventListener('click', function() {
+    chrome.storage.sync.get(['array'], function(result) {
+      let eventsArray = result.array;
+      for(let i=0; i<eventsArray.length;i++){
+        if (eventsArray[i].uuid == id){
+          index = i;
+          break;
+        }
+      }
+    //remove deleted event from array of events
+    //splice updates the a event
+    eventsArray.splice(index,1);
+    //remove the div
+    EVENTS_PAGE.removeChild(NEW_EVENT);
+    //update the store array
+    storeEvents(eventsArray);
+    })//sync
+  })//Delete listener
+
+  //edit button
+  let EDIT_EVENT_BTN = document.createElement("button");
+  EDIT_EVENT_BTN.textContent = "Edit";
+  NEW_EVENT.appendChild(EDIT_EVENT_BTN);
+  EDIT_EVENT_BTN.addEventListener('click', function() {
+    gotoEventInputMenu();
+    CREATE_EDITED_EVENT_BTN.hidden = false;
+    CREATE_NEW_EVENT_BTN.hidden = true;
+    populateInputFeilds(curEvent);
+    chrome.storage.sync.set({edit: curEvent}, function() {
+    });//sync
+  })// edit listener
+
+//creating elements   
+let EVENT_NAME_PARA = document.createElement("p");
+EVENT_NAME_PARA.textContent = "Event : " + curEvent.eventName;
+EVENT_NAME_PARA.id = "event-name";
+NEW_EVENT.appendChild(EVENT_NAME_PARA);
+
+let EVENT_START_TIME_PARA = document.createElement("p");
+EVENT_START_TIME_PARA.textContent = "Start Time: " + curEvent.startTime;
+EVENT_START_TIME_PARA.id = "event-start-time";
+NEW_EVENT.appendChild(EVENT_START_TIME_PARA);
+
+let EVENT_END_TIME_PARA = document.createElement("p");
+EVENT_END_TIME_PARA.textContent ="End Time: " + curEvent.endTime;
+EVENT_END_TIME_PARA.id = "event-end-time";
+NEW_EVENT.appendChild(EVENT_END_TIME_PARA);
+
+let DAYS_OF_WEEK_PARA = document.createElement("p");
+DAYS_OF_WEEK_PARA.textContent = "Days: " + getDaysFromIndex(curEvent);
+DAYS_OF_WEEK_PARA.id = "event-days";
+NEW_EVENT.appendChild(DAYS_OF_WEEK_PARA);
+
+
+let EVENT_START_DATE_PARA = document.createElement("p");
+EVENT_START_DATE_PARA.textContent = "Start Date: " + curEvent.startDate;
+EVENT_START_DATE_PARA.id = "event-start-date";
+NEW_EVENT.appendChild(EVENT_START_DATE_PARA);
+
+let EVENT_END_DATE_PARA = document.createElement("p");
+EVENT_END_DATE_PARA.textContent = "End Date: " + curEvent.endDate;
+EVENT_END_DATE_PARA.id = "event-end-date";
+NEW_EVENT.appendChild(EVENT_END_DATE_PARA);
+
+
+let EVENT_LINK_PARA = document.createElement("p");
+EVENT_LINK_PARA.textContent = "Zoom link: " + curEvent.zoomLink;
+EVENT_LINK_PARA.id = "event-zoom-link";
+NEW_EVENT.appendChild(EVENT_LINK_PARA);
+
+let EVENT_PASS_PARA = document.createElement("p");
+EVENT_PASS_PARA.textContent = "Zoom pass: " + curEvent.zoomPass;
+EVENT_PASS_PARA.id = "event-zoom-pass";
+NEW_EVENT.appendChild(EVENT_PASS_PARA);
+
+}//end of createEventElement function
+
+
+
+function getDaysFromIndex(curEvent){
+  arrayOfDays = ["Saturday","Monday","Tuesday","Wednesday","Thursday","Friday","Sunday"];
+  let stringOfDays = "";
+  let numOfDays = curEvent.days.length;
+  for(let i = 0; i < numOfDays; i++){
+    dayIndex = curEvent.days[i];
+    //on last day
+    if(i==numOfDays-1 && numOfDays == 1){
+      stringOfDays += arrayOfDays[dayIndex];
+    }
+    else if (i==numOfDays-1 && numOfDays > 1){
+      stringOfDays += " and " + arrayOfDays[dayIndex];
+    }
+    else{
+      stringOfDays += " " + arrayOfDays[dayIndex] + ",";
+    }
+
+    
+  }
+  return stringOfDays;
+}
+
 
 
 //-----------------Events Array------------------
@@ -471,7 +555,20 @@ function populateInputFeilds(curEvent){
   EVENT_END_DATE_INPUT_FEILD.value = curEvent.endDate;
   EVENT_START_TIME_INPUT.value = curEvent.startTime;
   EVENT_END_TIME_INPUT_FEILD.value = curEvent.endTime;
-}
+  //populate the checkmarks
+  for(let i =0; i<curEvent.days.length;i++){
+      for(let j =0; j<EVENT_DAYS_CBOX.children.length;j++){
+        if (EVENT_DAYS_CBOX.children[j].nodeName == "INPUT"){
+        //to see if a child matches a day
+        if(EVENT_DAYS_CBOX.children[j].value == curEvent.days[i]){
+          EVENT_DAYS_CBOX.children[j].checked = true;
+        }
+      }
+    }
+  
+  }//end for
+
+}//end populate
 
 
 
@@ -481,7 +578,7 @@ function populateInputFeilds(curEvent){
 //going to main
 function gotoMainMenu(){
   showMain();
-  hideProfileInput();
+  hideSettings();
   hideInput();
   hideEvents();
 }
@@ -490,30 +587,35 @@ function gotoMainMenu(){
 function gotoEventInputMenu(){
   hideMain();
   hideEvents();
+  hideSettings();
   showInput();
 }
-function gotoEventsMenu(){
+function gotoEventsView(){
   hideMain();
-  hideInput()
+  hideInput();
   showEvents();
 }
 
 //going to ProfileInput
-function gotoProfileInput(){
+function gotoSettings(){
   hideMain();
-  showProfileINput();
+  hideInput();
+  hideEvents();
+  showSettings();
 }
 
 //-----------Transition Helpers-------------------------
 //profile
-function hideProfileInput(){
+function hideSettings(){
   INPUT_PROFILE_PAGE.hidden = true;
   GO_TO_MAIN_BTN.hidden = true;
   COUNT_VIEW.hidden = false;
   EDIT_PROFILE_BTN.hidden = false;
   WELCOME.hidden = false;
+  CLEAR.hidden =true;
 }
-function showProfileINput(){
+function showSettings(){
+  CLEAR.hidden =false;
   INPUT_PROFILE_PAGE.hidden = false;
   GO_TO_MAIN_BTN.hidden = false;
   COUNT_VIEW.hidden = true;
@@ -540,10 +642,11 @@ function showMain(){
 function showInput(){
   INPUT_EVENTS_PAGE.hidden = false;
   GO_TO_MAIN_BTN.hidden = false; 
-  CREATE_EVENT_BTN.hidden = false;
+  CREATE_NEW_EVENT_BTN.hidden = false;
 }
 
 function hideInput(){
+  resetCheckbox();
   GO_TO_MAIN_BTN.hidden = true;
   INPUT_EVENTS_PAGE.hidden = true;
 }
