@@ -1,22 +1,25 @@
 <!DOCTYPE html>
 <html>
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round"
       rel="stylesheet">
   <link rel="stylesheet" href="popUp.css">
 <body>
   
   <!---------------------All Pages----------------------->
-  <div id = line-one ><div id = "welcome" >Welcome</div> <span id = "edit-profile" hidden class="material-icons">settings</span></div>
+  <span id = "back-to-main" class="material-icons-round icon" title="Home">&#xe88a;</span>
+  <span id = "page-title">Home</span>
+  <span id = "edit-profile" class="material-icons-round icon" title="Settings">&#xe8b8;</span>
+  <div id = "welcome" >Welcome</div>
+ 
   <div id = "event-count-view" hidden >Event Count: </div>
   
-  <button class = button id = "back-to-main" hidden >Main Menu</button>
-  <button id ="clear-memory">Clear</button>
-
+  
+ 
 
   <!----------------------Pages------------------------->
   <div hidden id="main-menu-page">
-    <button class = button id = "new-event" >Add Event</button>
-    <button class = button id = "view">View Events</button>
+    <button class = "blue-button button"  id = "new-event" >Add Event</button>
+    <button class = "blue-button button" id = "view">View Events</button>
     
   </div>
   
@@ -40,6 +43,7 @@
         </div>
       <br>
       <button id = "create-profile">Create Profile</button>
+      <button id ="clear-memory">Delete Profile</button>
   </form>
 
   </div> <!--end of input-name -->
@@ -83,11 +87,10 @@
       <input id = "link" type = "text" required placeholder="https://zoom...">
       <label for="pass">Pass</label>
       <input id = "pass" type = "text" required placeholder="Password">
-      
-      
+      <button hidden class ="blue-button button"id = "edit-submit">Edit Event</button> 
+      <button class = "blue-button button" id = "new-submit">Create Event</button> 
     </form>
-    <button hidden id = "edit-submit">Edit Event</button> 
-    <button  id = "new-submit">Create Event</button> 
+  
     
       <!--only when editing(submit is going to be hidden)-->
   </div>

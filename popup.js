@@ -148,7 +148,7 @@ EDIT_PROFILE_BTN.addEventListener("click",function(){
   PROFILE_INPUT_MSG.textContent = "Editing your profile";
   CREATE_PROFILE_BTN.textContent = "Edit Profile";
   //open the profile edit menu
-  gotoProfileInput();
+  gotoSettings();
 })//END EDIT PROFILE BTN
  
 
@@ -578,7 +578,7 @@ function populateInputFeilds(curEvent){
 //going to main
 function gotoMainMenu(){
   showMain();
-  hideProfileInput();
+  hideSettings();
   hideInput();
   hideEvents();
 }
@@ -587,6 +587,7 @@ function gotoMainMenu(){
 function gotoEventInputMenu(){
   hideMain();
   hideEvents();
+  hideSettings();
   showInput();
 }
 function gotoEventsView(){
@@ -596,21 +597,25 @@ function gotoEventsView(){
 }
 
 //going to ProfileInput
-function gotoProfileInput(){
+function gotoSettings(){
   hideMain();
-  showProfileINput();
+  hideInput();
+  hideEvents();
+  showSettings();
 }
 
 //-----------Transition Helpers-------------------------
 //profile
-function hideProfileInput(){
+function hideSettings(){
   INPUT_PROFILE_PAGE.hidden = true;
   GO_TO_MAIN_BTN.hidden = true;
   COUNT_VIEW.hidden = false;
   EDIT_PROFILE_BTN.hidden = false;
   WELCOME.hidden = false;
+  CLEAR.hidden =true;
 }
-function showProfileINput(){
+function showSettings(){
+  CLEAR.hidden =false;
   INPUT_PROFILE_PAGE.hidden = false;
   GO_TO_MAIN_BTN.hidden = false;
   COUNT_VIEW.hidden = true;
