@@ -7,18 +7,24 @@
   
   <!---------------------All Pages----------------------->
   <span id = "back-to-main" class="material-icons-round icon" title="Home">&#xe88a;</span>
-  <span id = "page-title">Home</span>
+  <span id = "home-title">Home</span>
+  <span hidden id = "settings-title">Settings</span>
+  <span hidden id = "view-events-title">Events</span>
+  <span hidden id = "create-event-title">Create Event</span>
+  <span hidden id = "edit-event-title">Edit Event</span>
   <span id = "edit-profile" class="material-icons-round icon" title="Settings">&#xe8b8;</span>
-  <div id = "welcome" >Welcome</div>
- 
-  <div id = "event-count-view" hidden >Event Count: </div>
-  
+  <br>
+  <br>
+  <p>
+  <span id = "event-count-view" hidden>Event Count:</span>
+  <span hidden id = "welcome" >Welcome</span>
+  </p>
   
  
 
   <!----------------------Pages------------------------->
   <div hidden id="main-menu-page">
-    <button class = "blue-button button"  id = "new-event" >Add Event</button>
+    <button class = "blue-button button"  id = "add-event" >Add Event</button>
     <button class = "blue-button button" id = "view">View Events</button>
     
   </div>
@@ -26,7 +32,6 @@
   
   <div id = "input-profile-page">
     <form>
-      <p id = "profile-input-message">Create a profile!</p>
       <p>Enter Name:</p>
       <input id = "fname" type = "text" required placeholder="First">
       <input id = "lname" type = "text" required placeholder="Last"> 
@@ -43,7 +48,7 @@
         </div>
       <br>
       <button id = "create-profile">Create Profile</button>
-      <button id ="clear-memory">Delete Profile</button>
+      <button id ="clear-memory">Reset  </button>
   </form>
 
   </div> <!--end of input-name -->
@@ -52,8 +57,8 @@
 
   <div hidden id = "input-event-page">
     <form>
-      <p id = input-header></p> 
-      <p>Meeting Info:</p>
+      <br>
+      <br>
       <label for="event">Event Name</label>
       <input id = "event" type = "text" required>
       <br>
@@ -71,6 +76,7 @@
         <input type="checkbox" value="3"> W
         <input type="checkbox" value="4"> T
         <input type="checkbox" value="5"> F
+        <br>
         <label for="week-end"></label>Weekend</label>
         <br>
         <input id = "week-end" type="checkbox" value="6"> S
@@ -91,7 +97,7 @@
       <button class = "blue-button button" id = "new-submit">Create Event</button> 
     </form>
   
-    
+  
       <!--only when editing(submit is going to be hidden)-->
   </div>
 

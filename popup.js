@@ -1,3 +1,10 @@
+//---------------------------------------------------------------------
+//                        TITLES
+const HOME_TITLE = document.getElementById("home-title");
+const PROFILE_INPUT_TITLE = document.getElementById("settings-title");
+const EVENT_VIEW_TITLE = document.getElementById("view-events-title");
+const EVENT_INPUT_TITLE = document.getElementById("create-event-title");
+const EVENT_EDIT_INPUT_TITLE = document.getElementById("edit-event-title");
 //                   DOM elements (order of HTML)
 //ON ALL PAGES
 //button
@@ -9,7 +16,7 @@ const COUNT_VIEW = document.getElementById("event-count-view");
 //UNIQUE PAGES
 //----------------------------MAIN----------------------------------
 const MAIN_PAGE= document.getElementById("main-menu-page");
-const NEW_EVENT_BTN = document.getElementById("new-event");
+const ADD_EVENT_BTN = document.getElementById("add-event");
 const VIEW_EVENT_BTN = document.getElementById("view");
 const EDIT_PROFILE_BTN = document.getElementById("edit-profile");
 //------------------------CREATE PROFILE----------------------------------
@@ -145,7 +152,7 @@ EDIT_PROFILE_BTN.addEventListener("click",function(){
   //currently no implementation to change these elements BACK to create instead of edit
   //this is because once a profile exists, you can only edit it anyways
   //if we offer a way to delete a profile, we then need to change it back and forth
-  PROFILE_INPUT_MSG.textContent = "Editing your profile";
+  //EVENT_INPUT_TITLE.textContent = "Editing your profile";
   CREATE_PROFILE_BTN.textContent = "Edit Profile";
   //open the profile edit menu
   gotoSettings();
@@ -189,7 +196,6 @@ function storeProfile(p){
 
 
 function resetCheckbox(){
-  console.log("penis");
   for(let i  = 0; i<EVENT_DAYS_CBOX.children.length;i++){
     if(EVENT_DAYS_CBOX.children[i].nodeName == "INPUT"){
       EVENT_DAYS_CBOX.children[i].checked = false;
@@ -197,15 +203,11 @@ function resetCheckbox(){
   }
 }
 
-//-----------------CREATE NEW EVENT-------------------------
-NEW_EVENT_BTN.addEventListener('click', function () {
+//-----------------ADD EVENT-------------------------
+ADD_EVENT_BTN.addEventListener('click', function () {
   gotoEventInputMenu();
-  
-
-
- 
-
-
+  //show title
+  EVENT_INPUT_TITLE.hidden = false;
    //TEST - preset values - NOT IN FINAL
   let tempTime =  getCurrentTime();
   let tempDate = getCurrentDate();
@@ -226,13 +228,11 @@ GO_TO_MAIN_BTN.addEventListener('click',function(){
   GO_TO_MAIN_BTN.hidden = true;
   });
   
-//potential issue - adding sendtoedit property. but if the eiditing process gets canceled multiple event objects could have that property and so Check for edits wouldnt just pick the last instance if it happens multiple times.
-
-
-//I NEED TO CREATE THE EVENT IN THE VIEW BUTTON OR THEY WONT SHOW UP WHEN THE PAGE RELOADS!!!!!!
-
+//-----------SUBMIT EDITED EVENT
 ///--edit event helpers
 CREATE_EDITED_EVENT_BTN.addEventListener('click', function() {
+  //hide the edit event title
+  EVENT_EDIT_INPUT_TITLE.hidden = true;
   chrome.storage.sync.get(['edit','array'], function(result) {
     let eventsArray = result.array;
     let eventToEdit = result.edit;
@@ -328,9 +328,11 @@ function oneDayPicked(){
 
 
 
-//------------CREATE NEW EVENT------------
+//------------SUBMIT NEW EVENT------------
 //creates new elements
 CREATE_NEW_EVENT_BTN.addEventListener('click', function() {
+  //hide the create new event title
+  EVENT_INPUT_TITLE.hidden = true;
   chrome.storage.sync.get(['array'], function(result) {
     let eventsArray = result.array;
     let eventToFill = {};
@@ -424,6 +426,8 @@ function createEventElement(id, a){
   EDIT_EVENT_BTN.textContent = "Edit";
   NEW_EVENT.appendChild(EDIT_EVENT_BTN);
   EDIT_EVENT_BTN.addEventListener('click', function() {
+      //show title
+    EVENT_EDIT_INPUT_TITLE.hidden = true;
     gotoEventInputMenu();
     CREATE_EDITED_EVENT_BTN.hidden = false;
     CREATE_NEW_EVENT_BTN.hidden = true;
@@ -519,13 +523,8 @@ CLEAR.addEventListener('click', clearMemory);
 
 //can call in console
 function clearMemory(){
-  chrome.storage.sync.remove(['array'], result => {
-    console.log('array cleared');
+  chrome.storage.sync.remove(['array', 'profile', 'edit'], result => {
   });
-  chrome.storage.sync.remove(['profile'], result => {
-    console.log('profile cleared' + result);
-  });
-
 }
 
 
@@ -613,6 +612,7 @@ function hideSettings(){
   EDIT_PROFILE_BTN.hidden = false;
   WELCOME.hidden = false;
   CLEAR.hidden =true;
+  PROFILE_INPUT_TITLE.hidden = true;
 }
 function showSettings(){
   CLEAR.hidden =false;
@@ -621,21 +621,30 @@ function showSettings(){
   COUNT_VIEW.hidden = true;
   EDIT_PROFILE_BTN.hidden = true;
   WELCOME.hidden = true;
+  //show title
+  PROFILE_INPUT_TITLE.hidden = false;
+  //hide title
+  EVENT_INPUT_TITLE.hidden = true;
+  
 }
 
 //main
 function hideMain(){
   MAIN_PAGE.hidden = true;
   EDIT_PROFILE_BTN.hidden = true;
-  WELCOME.hidden =true;
+  HOME_TITLE.hidden = true;
 }
 function showMain(){
+  //show title
   INPUT_PROFILE_PAGE.hidden = true;
   COUNT_VIEW.hidden =false;
   MAIN_PAGE.hidden = false;
   EDIT_PROFILE_BTN.hidden = false;
   GO_TO_MAIN_BTN.hidden = true;
   WELCOME.hidden = false;
+  HOME_TITLE.hidden = false;
+  //hide title
+  EVENT_INPUT_TITLE.hidden = true;
 }
 
 //input
@@ -656,18 +665,29 @@ function showEvents(){
   EVENTS_PAGE.hidden = false;
   GO_TO_MAIN_BTN.hidden = false; 
   COUNT_VIEW.hidden = false;
+  //title
+  EVENT_VIEW_TITLE.hidden = false;
+
 }
 function hideEvents(){
   EVENTS_PAGE.hidden = true;
   GO_TO_MAIN_BTN.hidden = true;
+  //title
+  EVENT_VIEW_TITLE.hidden = true;
 }
+
+// EVENT_VIEW_TITLE.hidden = false;
+// PROFILE_INPUT_TITLE.hidden = true;
+// HOME_TITLE.hidden = true;
+// EVENT_INPUT_TITLE.hidden = true;
+// EVENT_EDIT_INPUT_TITLE.hidden = true;
+
 
 //-------END HIDING------------------------------------------------
 
 
 //------------------Validation-------------------------------
 function NameInputFilled(){
-  console.log("nameFilled is Called");
   let infoValid;
   if(FIRST_NAME_INPUT_FEILD.value !="" && LAST_NAME_INPUT_FEILD.value !=""){
     infoValid = true;
