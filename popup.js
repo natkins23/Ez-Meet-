@@ -120,6 +120,7 @@ function updateWelcome(p){
 
 // ------------- profile page listeners
 NICKNAME_CHECKBOX.addEventListener("click", function(){
+ 
   if(NICKNAME_CHECKBOX.checked){
     NICKNAME_INPUT_FEILD_CONTAINER.hidden = false; 
     NICKNAME_INPUT_FEILD.required = true;
@@ -210,10 +211,11 @@ ADD_EVENT_BTN.addEventListener('click', function () {
   EVENT_INPUT_TITLE.hidden = false;
    //TEST - preset values - NOT IN FINAL
   let tempTime =  getCurrentTime();
-  let tempDate = getCurrentDate();
+  let tempStartDate = getCurrentDate();
+  let tempEndDate = getFutureDate();
   EVENT_NAME_TEXT_FEILD.value = "165";
-  EVENT_START_DATE_INPUT_FEILD.value = tempDate;
-  EVENT_END_DATE_INPUT_FEILD.value = tempDate;
+  EVENT_START_DATE_INPUT_FEILD.value = tempStartDate;
+  EVENT_END_DATE_INPUT_FEILD.value = tempEndDate;
   EVENT_DAYS_CBOX.childNodes.nodeName == "checkbox";
   EVENT_START_TIME_INPUT.value  = tempTime;
   EVENT_END_TIME_INPUT_FEILD.value  = tempTime;
@@ -343,6 +345,7 @@ CREATE_NEW_EVENT_BTN.addEventListener('click', function() {
       storeEvents(eventsArray);
       createEventElement(filledEvent.uuid,eventsArray);
       gotoMainMenu();
+      chrome.runtime.sendMessage({todo: 'penis'});
       
     } 
   })//Sync
@@ -484,7 +487,7 @@ NEW_EVENT.appendChild(EVENT_PASS_PARA);
 
 
 function getDaysFromIndex(curEvent){
-  arrayOfDays = ["Saturday","Monday","Tuesday","Wednesday","Thursday","Friday","Sunday"];
+  arrayOfDays = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
   let stringOfDays = "";
   let numOfDays = curEvent.days.length;
   for(let i = 0; i < numOfDays; i++){
@@ -533,6 +536,16 @@ function getCurrentDate(){
   let today = new Date();
   var dd = String(today.getDate()).padStart(2, '0');
   var mm = String(today.getMonth() + 1).padStart(2, '0');
+  var yyyy = today.getFullYear();
+  today = yyyy + '-' + mm + '-' + dd;
+  return today; 
+}
+
+///TEMPORARY
+function getFutureDate(){
+  let today = new Date();
+  var dd = String(today.getDate()).padStart(2, '0');
+  var mm = String(today.getMonth() + 3).padStart(2, '0');
   var yyyy = today.getFullYear();
   today = yyyy + '-' + mm + '-' + dd;
   return today; 

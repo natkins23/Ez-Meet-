@@ -1,12 +1,12 @@
 {
   "name": "Ez-Meet Zoom",
   "description": "Connect automatically to your zoom meetings",
-  "version": "2.0",
+  "version": "0.1.0",
   "manifest_version": 3,
   "background": {
     "service_worker": "background.js"
   },
-  "permissions": ["storage", "activeTab", "scripting"],
+  "permissions": ["storage", "activeTab", "scripting", "alarms", "tabs"],
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
@@ -21,5 +21,14 @@
     "32": "/EZlogo/ez-logo-3rd-32.png",
     "48": "/EZlogo/ez-logo-3rd-48.png",
     "128": "/EZlogo/ezlogo128.png"
-  }
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://zoom.us/wc/*"
+      ],
+      "js": ["content.js"]
+    }
+  ]
+  
 }
