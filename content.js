@@ -1,7 +1,3 @@
-//if i just close the tab, i will need to know which tab was just opened.
-
-
-
 
 // chrome.runtime.onMessage.addListener(function(response,sender,sendResponse){
 //   if(message.response == 'test')

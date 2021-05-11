@@ -5,30 +5,30 @@
   "manifest_version": 3,
   "background": {
     "service_worker": "background.js"
+
   },
   "permissions": ["storage", "activeTab", "scripting", "alarms", "tabs"],
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
-      "16": "/EZlogo/ez-logo-3rd-16.png",
-      "32": "/EZlogo/ez-logo-3rd-32.png",
-      "48": "/EZlogo/ez-logo-3rd-48.png",
-      "128": "/EZlogo/ezlogo128.png"
+      "16": "/images/ez-logo-16.png",
+      "32": "/images/ez-logo-32.png",
+      "48": "/images/ez-logo-48.png"
     }
   },
   "icons": {
-    "16": "/EZlogo/ez-logo-3rd-16.png",
-    "32": "/EZlogo/ez-logo-3rd-32.png",
-    "48": "/EZlogo/ez-logo-3rd-48.png",
-    "128": "/EZlogo/ezlogo128.png"
+    "16": "/images/ez-logo-16.png",
+    "32": "/images/ez-logo-32.png",
+    "48": "/images/ez-logo-48.png"
   },
   "content_scripts": [
     {
       "matches": [
-        "https://zoom.us/wc/*"
+        "<all_urls>"
       ],
       "js": ["content.js"]
     }
-  ]
+  ],
+  "Content-Security-Policy": "script-src https://unpkg.com/dayjs@1.8.21/dayjs.min.js"
   
 }

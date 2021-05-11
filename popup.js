@@ -1,4 +1,8 @@
-//---------------------------------------------------------------------
+import {DateTime} from '/luxon.js'
+let result = DateTime.local()
+console.log(result.plus({days:1}))
+console.log(result.toLocaleString())
+
 //                        TITLES
 const HOME_TITLE = document.getElementById("home-title");
 const PROFILE_INPUT_TITLE = document.getElementById("settings-title");
@@ -77,7 +81,7 @@ function setupEvents(){
 //either exists and goes to main
 //or stores an empty profile object
 function setupProfile(){
-  defaultProfile = {};
+  let defaultProfile = {};
   chrome.storage.sync.get({profile:defaultProfile}, function(result) {
     let profile = result.profile;
     //profile exists, go to mainMenu
