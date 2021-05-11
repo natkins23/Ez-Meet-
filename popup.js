@@ -433,16 +433,27 @@ function createEventElement(id, a){
   EDIT_EVENT_BTN.textContent = "Edit";
   NEW_EVENT.appendChild(EDIT_EVENT_BTN);
   EDIT_EVENT_BTN.addEventListener('click', function() {
-      //show title
-    EVENT_EDIT_INPUT_TITLE.hidden = true;
-    gotoEventInputMenu();
-    CREATE_EDITED_EVENT_BTN.hidden = false;
-    CREATE_NEW_EVENT_BTN.hidden = true;
-    populateInputFeilds(curEvent);
-    chrome.storage.sync.set({edit: curEvent}, function() {
-    });//sync
+    chrome.storage.sync.get(['array'], function(result) {
+      let eventsArray = result.array;
+      //update curEvent with the newest version of that event
+      for(let i =0; i<eventsArray;i++){
+        if (curEvent.uuid == eventsArray[i].uuid){
+          curEvent == eventsArray[i];
+          break;
+        }
+      }
+        //show title
+      EVENT_EDIT_INPUT_TITLE.hidden = true;
+      gotoEventInputMenu();
+      CREATE_EDITED_EVENT_BTN.hidden = false;
+      CREATE_NEW_EVENT_BTN.hidden = true;
+      populateInputFeilds(curEvent);
+      chrome.storage.sync.set({edit: curEvent}, function() {
+      })//set edit sync
+    })//get array sync 
   })// edit listener
 
+  
 //creating elements   
 let EVENT_NAME_PARA = document.createElement("p");
 EVENT_NAME_PARA.textContent = "Event : " + curEvent.eventName;
@@ -491,11 +502,11 @@ NEW_EVENT.appendChild(EVENT_PASS_PARA);
 
 
 function getDaysFromIndex(curEvent){
-  arrayOfDays = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+  let arrayOfDays = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
   let stringOfDays = "";
   let numOfDays = curEvent.days.length;
   for(let i = 0; i < numOfDays; i++){
-    dayIndex = curEvent.days[i];
+    let dayIndex = curEvent.days[i];
     //on last day
     if(i==numOfDays-1 && numOfDays == 1){
       stringOfDays += arrayOfDays[dayIndex];
